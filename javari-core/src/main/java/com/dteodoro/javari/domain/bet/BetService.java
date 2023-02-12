@@ -1,0 +1,56 @@
+package com.dteodoro.javari.domain.bet;
+
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.dteodoro.javari.dto.BetDTO;
+import com.dteodoro.javari.repository.BetRepository;
+import com.dteodoro.javari.service.ScheduleService;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class BetService {
+
+	private final BetRepository betRepo;
+	@Lazy @Autowired 
+	private ScheduleService scheduleService;
+	private final ModelMapper modelMapper;
+
+	public ResponseEntity<BetDTO> makeBet(BetDTO betDto) {
+		Bet bet = modelMapper.map(betDto, Bet.class);
+		Optional<Bet> currentBet = betRepo.findByScheduleId(betDto.getScheduleId());
+		if (sheduleIsOpen(betDto.getScheduleId())) {
+			if(currentBet.isPresent()) {
+				bet.setId(currentBet.get().getId());
+			}
+			betRepo.save(bet);
+			return ResponseEntity.created(URI.create("/bet/" + bet.getId())).body(modelMapper.map(bet, BetDTO.class));
+		}
+		throw new IllegalStateException("cannot make bet for schedules in process or closed");
+
+	}
+	
+	public List<BetDTO> getLastBets(UUID bettorId) {
+		List<Bet> bets = betRepo.findByBettorId(bettorId).orElse(Collections.emptyList());
+		return bets.stream().map(this::convertToBetDTO).toList();
+	}
+	
+	private BetDTO convertToBetDTO(Bet bet) {
+		return modelMapper.map(bet, BetDTO.class);
+	}
+	
+	private boolean sheduleIsOpen(UUID scheduleId) {
+		return scheduleService.scheduleIsOpen(scheduleId);
+	}
+}
