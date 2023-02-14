@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.dteodoro.javari.entity.Competitor;
+import com.dteodoro.javari.entity.Schedule;
+import com.dteodoro.javari.enumeration.ScheduleStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -20,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BetService {
 
 	private final BetRepository betRepo;
@@ -45,7 +50,29 @@ public class BetService {
 		List<Bet> bets = betRepo.findByBettorId(bettorId).orElse(Collections.emptyList());
 		return bets.stream().map(this::convertToBetDTO).toList();
 	}
-	
+
+	public void setWin(Schedule schedule){
+		if(schedule.getStatus().equals(ScheduleStatus.STATUS_FINAL)){
+			BetEnum winner = getWinner(schedule);
+			schedule.getBets().forEach(bet -> {
+				bet.setWin(bet.getBet().equals(winner));
+				betRepo.save(bet);
+			});
+		}else{
+			log.error("Schedule hasn't finished yet ");
+		}
+	}
+
+	private BetEnum getWinner(Schedule schedule) {
+		if (schedule.getHomeCompetitor().getWinner()) {
+			return BetEnum.HOME;
+		}
+		if (schedule.getAwayCompetitor().getWinner()) {
+			return BetEnum.AWAY;
+		}
+		return BetEnum.TIE;
+	}
+
 	private BetDTO convertToBetDTO(Bet bet) {
 		return modelMapper.map(bet, BetDTO.class);
 	}

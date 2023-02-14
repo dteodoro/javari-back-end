@@ -12,6 +12,9 @@ public class BetDTO {
 	private UUID id;
 	private UUID bettorId;
 	private UUID scheduleId;
-	private BetEnum bet; 
+	private BetEnum bet;
+	private Boolean win;
+
+	private Integer score;
 	
 }
