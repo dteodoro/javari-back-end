@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.dteodoro.javari.domain.score.ScoreService;
 import com.dteodoro.javari.entity.Competitor;
 import com.dteodoro.javari.entity.Schedule;
 import com.dteodoro.javari.enumeration.ScheduleStatus;
@@ -30,6 +31,8 @@ public class BetService {
 	private final BetRepository betRepo;
 	@Lazy @Autowired 
 	private ScheduleService scheduleService;
+
+	private ScoreService scoreService;
 	private final ModelMapper modelMapper;
 
 	public ResponseEntity<BetDTO> makeBet(BetDTO betDto) {
@@ -56,11 +59,18 @@ public class BetService {
 			BetEnum winner = getWinner(schedule);
 			schedule.getBets().forEach(bet -> {
 				bet.setWin(bet.getBet().equals(winner));
-				betRepo.save(bet);
+				update(bet);
 			});
 		}else{
 			log.error("Schedule hasn't finished yet ");
 		}
+	}
+
+	private void update(Bet bet) {
+		if(bet.getWin()){
+			scoreService.setPoint(bet);
+		}
+		betRepo.save(bet);
 	}
 
 	private BetEnum getWinner(Schedule schedule) {

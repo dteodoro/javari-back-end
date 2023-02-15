@@ -21,5 +21,8 @@ public class BettorService {
 		return modelMapper.map(bettorRepo.findById(bettorId).orElse(null), BettorDTO.class);
 
 	}
-	
+
+    public Bettor findById(UUID bettorId) {
+		return bettorRepo.findById(bettorId).orElse(null);
+    }
 }
