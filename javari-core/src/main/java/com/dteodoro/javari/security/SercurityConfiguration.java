@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -34,17 +35,16 @@ public class SercurityConfiguration {
 		return http.cors().and().csrf().disable() //disable CORS and CSRF 'cause it will be validated by Token
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //disable Session 'cause it will be an STATELESS API
 			.and().authorizeHttpRequests() //Configure HttpRequest 
-			.requestMatchers(HttpMethod.POST, "/login").permitAll() // permit access to login URI through POST method
+			.requestMatchers(HttpMethod.POST, "/auth/login","/auth/signIn").permitAll() // permit access to login URI through POST method
 			.anyRequest().authenticated() //any other request must be authenticated 
 			.and().addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class) // add SecurityFilter to verify token before spring default filter
 			.build(); // build the SercurityFilterChain
 	}
 
 	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new MockCryptPasswordEncoder();
+	public PasswordEncoder passwordEncoder(){
+		return new BCryptPasswordEncoder();
 	}
-
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
 		return configuration.getAuthenticationManager();

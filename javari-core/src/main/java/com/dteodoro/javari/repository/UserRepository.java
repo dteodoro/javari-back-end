@@ -10,5 +10,6 @@ import com.dteodoro.javari.domain.bettor.AppUser;
 public interface UserRepository extends JpaRepository<AppUser, UUID> {
 	
 	Optional<AppUser> findByUsername(String username);
+	boolean existsByUsername(String username);
 
 }
