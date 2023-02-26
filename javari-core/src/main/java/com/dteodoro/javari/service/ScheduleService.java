@@ -56,7 +56,7 @@ public class ScheduleService {
                 .status(schedule.getStatus())
                 .competitors(List.of(mapper.map(schedule.getHomeCompetitor(), CompetitorDTO.class),
                         mapper.map(schedule.getAwayCompetitor(), CompetitorDTO.class)))
-                .bet(mapper.map(bet, BetDTO.class))
+                .bet(bet != null ? mapper.map(bet, BetDTO.class) : null)
                 .build();
     }
 
