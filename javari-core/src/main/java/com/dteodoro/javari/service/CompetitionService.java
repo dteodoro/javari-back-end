@@ -2,7 +2,7 @@ package com.dteodoro.javari.service;
 
 import org.springframework.stereotype.Service;
 
-import com.dteodoro.javari.entity.Competition;
+import com.dteodoro.javari.domain.game.Competition;
 import com.dteodoro.javari.repository.CompetitionRepository;
 
 import lombok.RequiredArgsConstructor;

@@ -8,15 +8,14 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.dteodoro.javari.dto.StandingDTO;
+import com.dteodoro.javari.dto.TeamDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.dteodoro.javari.dto.StandingDTO;
-import com.dteodoro.javari.dto.TeamDTO;
-import com.dteodoro.javari.dto.TeamForm;
 import com.dteodoro.javari.enumeration.NFLConference;
 import com.dteodoro.javari.enumeration.NFLDivision;
 import com.dteodoro.javari.repository.TeamRespository;

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dteodoro.javari.domain.team.TeamService;
 import com.dteodoro.javari.dto.TeamDTO;
-import com.dteodoro.javari.dto.TeamForm;
+import com.dteodoro.javari.domain.team.TeamForm;
 
 import lombok.RequiredArgsConstructor;
 

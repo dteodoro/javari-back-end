@@ -1,3 +1,5 @@
 package com.dteodoro.javari.security;
 
-public record TokenJWTDTO(String token, Boolean userLogged) {}
+import java.util.UUID;
+
+public record TokenJWTDTO(String token, Boolean userLogged, String userName, UUID userId) { }

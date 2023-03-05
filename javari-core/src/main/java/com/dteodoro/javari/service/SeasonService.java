@@ -2,7 +2,7 @@ package com.dteodoro.javari.service;
 
 import org.springframework.stereotype.Service;
 
-import com.dteodoro.javari.entity.Season;
+import com.dteodoro.javari.domain.game.Season;
 import com.dteodoro.javari.repository.SeasonRepository;
 
 import lombok.RequiredArgsConstructor;

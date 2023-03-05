@@ -7,8 +7,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.dteodoro.javari.domain.score.ScoreService;
-import com.dteodoro.javari.entity.Competitor;
-import com.dteodoro.javari.entity.Schedule;
+import com.dteodoro.javari.dto.BetDTO;
+import com.dteodoro.javari.domain.game.Schedule;
 import com.dteodoro.javari.enumeration.ScheduleStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.dteodoro.javari.dto.BetDTO;
 import com.dteodoro.javari.repository.BetRepository;
 import com.dteodoro.javari.service.ScheduleService;
 

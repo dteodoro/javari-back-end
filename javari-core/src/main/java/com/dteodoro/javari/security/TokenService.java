@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import com.dteodoro.javari.domain.bettor.AppUser;
+import com.dteodoro.javari.domain.user.BaseUser;
 
 @Service
 public class TokenService {
@@ -18,7 +18,7 @@ public class TokenService {
 	@Value("${api.security.token.secret}")
 	private String secret;
 	
-	public String generateToken(AppUser user) {
+	public String generateToken(BaseUser user) {
 		try {
 		    var algorithm = Algorithm.HMAC256(secret);
 		   return JWT.create()

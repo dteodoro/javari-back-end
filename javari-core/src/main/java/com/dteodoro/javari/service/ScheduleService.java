@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.dteodoro.javari.domain.bet.Bet;
 import com.dteodoro.javari.dto.ScheduleFilterDTO;
@@ -23,8 +22,7 @@ import com.dteodoro.javari.domain.bet.BetService;
 import com.dteodoro.javari.dto.BetDTO;
 import com.dteodoro.javari.dto.CompetitorDTO;
 import com.dteodoro.javari.dto.ScheduleDTO;
-import com.dteodoro.javari.entity.Schedule;
-import com.dteodoro.javari.enumeration.SeasonType;
+import com.dteodoro.javari.domain.game.Schedule;
 import com.dteodoro.javari.repository.CompetitorRepository;
 import com.dteodoro.javari.repository.ScheduleRepository;
 

@@ -1,6 +1,6 @@
 package com.dteodoro.javari.repository;
 
-import com.dteodoro.javari.domain.bettor.Score;
+import com.dteodoro.javari.domain.score.Score;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

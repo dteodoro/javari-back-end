@@ -1,6 +1,6 @@
 package com.dteodoro.javari.service;
 
-import com.dteodoro.javari.entity.Schedule;
+import com.dteodoro.javari.domain.game.Schedule;
 import com.dteodoro.javari.enumeration.ScheduleStatus;
 
 public class GameService {

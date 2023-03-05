@@ -4,13 +4,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.dteodoro.javari.entity.Schedule;
-import com.dteodoro.javari.enumeration.SeasonType;
+import com.dteodoro.javari.domain.game.Schedule;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 

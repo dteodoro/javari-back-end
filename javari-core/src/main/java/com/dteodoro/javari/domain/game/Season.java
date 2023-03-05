@@ -1,4 +1,4 @@
-package com.dteodoro.javari.entity;
+package com.dteodoro.javari.domain.game;
 
 import java.util.List;
 import java.util.UUID;

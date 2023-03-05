@@ -1,4 +1,4 @@
-package com.dteodoro.javari.dto;
+package com.dteodoro.javari.domain.team;
 
 import com.dteodoro.javari.enumeration.NFLConference;
 import com.dteodoro.javari.enumeration.NFLDivision;

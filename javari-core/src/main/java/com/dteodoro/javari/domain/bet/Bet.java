@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import jakarta.persistence.*;
 
-import com.dteodoro.javari.entity.Schedule;
+import com.dteodoro.javari.domain.game.Schedule;
 
 import lombok.Getter;
 import lombok.Setter;

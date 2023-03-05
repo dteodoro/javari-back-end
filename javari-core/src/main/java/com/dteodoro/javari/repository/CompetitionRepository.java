@@ -2,7 +2,7 @@ package com.dteodoro.javari.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.dteodoro.javari.entity.Competition;
+import com.dteodoro.javari.domain.game.Competition;
 
 public interface CompetitionRepository extends JpaRepository<Competition, Long> {
 

@@ -5,11 +5,11 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.dteodoro.javari.domain.bettor.AppUser;
+import com.dteodoro.javari.domain.user.BaseUser;
 
-public interface UserRepository extends JpaRepository<AppUser, UUID> {
+public interface UserRepository extends JpaRepository<BaseUser, UUID> {
 	
-	Optional<AppUser> findByUsername(String username);
+	Optional<BaseUser> findByUsername(String username);
 	boolean existsByUsername(String username);
 
 }
