@@ -1,5 +1,6 @@
 package com.dteodoro.javari.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,18 @@ public class BettorController {
 		}
 		return ResponseEntity.notFound().build();
 	}
-	
+	@GetMapping("/{id}/rivals")
+	public ResponseEntity<List<BettorDTO>> getRivals(@PathVariable("id") UUID bettorId){
+		if(bettorId != null) {
+			List<BettorDTO> rivals = bettorService.findRivals(bettorId);
+			return ResponseEntity.ok(rivals);
+		}
+		return ResponseEntity.notFound().build();
+	}
+
+	@GetMapping("/{id}/{roleName}")
+	public boolean hasPermission(@PathVariable(name="id",required = true)UUID bettorId,@PathVariable(name="roleName",required = true) String roleName){
+		return bettorService.hasPermission(bettorId,roleName);
+	}
 }
 
