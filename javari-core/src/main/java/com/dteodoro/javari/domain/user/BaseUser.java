@@ -1,4 +1,4 @@
-package com.dteodoro.javari.domain.bettor;
+package com.dteodoro.javari.domain.user;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +24,7 @@ import lombok.Setter;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 @NoArgsConstructor
-public class AppUser implements UserDetails {
+public class BaseUser implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,7 +34,7 @@ public class AppUser implements UserDetails {
 	private Collection<GrantedAuthority> authorities;
 	
 	
-	public AppUser(UUID uuid,String username, String password, List<GrantedAuthority> authorities) {
+	public BaseUser(UUID uuid, String username, String password, List<GrantedAuthority> authorities) {
 		this.id = uuid;
 		this.username = username;
 		this.password = password;
