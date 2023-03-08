@@ -1,20 +1,16 @@
 package com.dteodoro.javari.controller;
 
+import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.dteodoro.javari.dto.ConferenceTeamsDTO;
+import com.dteodoro.javari.enumeration.NFLConference;
+import com.dteodoro.javari.enumeration.NFLDivision;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import com.dteodoro.javari.domain.team.TeamService;
 import com.dteodoro.javari.dto.TeamDTO;
-import com.dteodoro.javari.domain.team.TeamForm;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,14 +20,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TeamController {
 
-	private TeamService teamService;
+	private final TeamService teamService;
 
 	@GetMapping
-	public Page<TeamDTO> findAll(@PageableDefault(direction = Direction.DESC) Pageable pageable, TeamForm teamForm) {
-		return teamService.findAll(teamForm, pageable);
+	public List<ConferenceTeamsDTO> findAll(@RequestParam(name = "conference") String conference,
+											@RequestParam(name="division") String division) {
+
+		return teamService.findByTypes(StringUtils.hasText(conference) ? NFLConference.valueOf(conference) : null ,
+				StringUtils.hasText(division) ? NFLDivision.valueOf(division):null);
 	}
 	
-	@GetMapping("/team/{teamId}")
+	@GetMapping("/{teamId}")
 	public TeamDTO findById(@PathVariable(name="teamId",required = true) UUID teamId) {
 		return teamService.findById(teamId);
 	}

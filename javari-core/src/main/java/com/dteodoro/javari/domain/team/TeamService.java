@@ -8,6 +8,8 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.dteodoro.javari.dto.ConferenceTeamsDTO;
+import com.dteodoro.javari.dto.DivisionTeamDTO;
 import com.dteodoro.javari.dto.StandingDTO;
 import com.dteodoro.javari.dto.TeamDTO;
 import org.modelmapper.ModelMapper;
@@ -86,4 +88,38 @@ public class TeamService {
 	private TeamDTO convertToTeamDTO(Team team) {
 		return modelMapper.map(team, TeamDTO.class);
 	}
+
+	public List<ConferenceTeamsDTO> findByTypes(NFLConference conferenceType, NFLDivision divisionType)  {
+		List<ConferenceTeamsDTO> conferences = createConferencesList(conferenceType,divisionType);
+		for (ConferenceTeamsDTO conf : conferences) {
+			for(DivisionTeamDTO div : conf.getDivisions()){
+				div.setTeams(
+						teamRepo.findByConferenceAndDivision(
+									conferenceType == null ? conf.getName() : conferenceType,
+									divisionType == null ? div.getName(): divisionType)
+										.stream().map(this::convertToTeamDTO).toList());
+			}
+		}
+		return conferences;
+	}
+
+	private List<ConferenceTeamsDTO> createConferencesList(NFLConference conferenceType, NFLDivision divisionType){
+		if(conferenceType != null){
+			return List.of(new ConferenceTeamsDTO(conferenceType,createDivisionList(divisionType)));
+		}
+		return List.of(
+				new ConferenceTeamsDTO(NFLConference.NFC,createDivisionList(divisionType)),
+				new ConferenceTeamsDTO(NFLConference.AFC,createDivisionList(divisionType)));
+	}
+	private List<DivisionTeamDTO> createDivisionList(NFLDivision divisionType){
+		if(divisionType != null){
+			return List.of(new DivisionTeamDTO(divisionType));
+		}
+		return List.of(
+				new DivisionTeamDTO(NFLDivision.EAST),
+				new DivisionTeamDTO(NFLDivision.NORTH),
+				new DivisionTeamDTO(NFLDivision.SOUTH),
+				new DivisionTeamDTO(NFLDivision.WEST));
+	}
+
 }
