@@ -39,9 +39,8 @@ public class ScheduleService {
     private BetService betService;
     private final ModelMapper mapper;
 
-    public Page<ScheduleDTO> findAll(UUID bettorId, Pageable pageable) {
-        Page<Schedule> schedules = scheduleRepo.findAll(pageable);
-        return schedules.map(s -> convertToScheduleDTO(s, bettorId));
+    public List<ScheduleDTO> findAll(UUID bettorId) {
+        return scheduleRepo.findAll().stream().map(s -> convertToScheduleDTO(s, bettorId)).toList();
     }
 
     private ScheduleDTO convertToScheduleDTO(Schedule schedule, UUID bettorId) {
@@ -55,6 +54,18 @@ public class ScheduleService {
                 .competitors(List.of(mapper.map(schedule.getHomeCompetitor(), CompetitorDTO.class),
                         mapper.map(schedule.getAwayCompetitor(), CompetitorDTO.class)))
                 .bet(bet != null ? mapper.map(bet, BetDTO.class) : null)
+                .build();
+    }
+
+    private ScheduleDTO convertToScheduleDTO(Schedule schedule){
+        return ScheduleDTO.builder()
+                .id(schedule.getId())
+                .name(schedule.getName())
+                .shortName(schedule.getShortName())
+                .startDate(schedule.getStartDate())
+                .status(schedule.getStatus())
+                .competitors(List.of(mapper.map(schedule.getHomeCompetitor(), CompetitorDTO.class),
+                        mapper.map(schedule.getAwayCompetitor(), CompetitorDTO.class)))
                 .build();
     }
 
@@ -81,8 +92,8 @@ public class ScheduleService {
 
     }
 
-    public Page<ScheduleDTO> findBySeason(Integer year, String slug, UUID bettorId, Pageable pageable) {
-        Page<ScheduleDTO> schedules = scheduleRepo.findBySeasonSlugAndSeasonCompetitionYear(pageable, slug, year).map(s -> convertToScheduleDTO(s, bettorId));
+    public List<ScheduleDTO> findBySeason(Integer year, String slug, UUID bettorId) {
+        List<ScheduleDTO> schedules = scheduleRepo.findBySeasonSlugAndSeasonCompetitionYear( slug, year).stream().map(s -> convertToScheduleDTO(s, bettorId)).toList();
         Map<UUID, BetDTO> betMap = betService.getLastBets(bettorId).stream().collect(Collectors.toMap(BetDTO::getScheduleId, Function.identity()));
         schedules.forEach(s -> s.setBet(betMap.get(s.getId())));
         return schedules;
@@ -90,5 +101,9 @@ public class ScheduleService {
 
     public ScheduleFilterDTO getScheduleFilters() {
         return new ScheduleFilterDTO(scheduleRepo.findFilterMenuYear(), scheduleRepo.findFilterMenuSeason());
+    }
+
+    public List<ScheduleDTO> findByTeam(UUID teamId, String year, String slug) {
+        return scheduleRepo.findByHomeCompetitorTeamIdOrAwayCompetitorTeamId(teamId,teamId).stream().map(this::convertToScheduleDTO).toList();
     }
 }

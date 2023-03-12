@@ -8,10 +8,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.dteodoro.javari.domain.game.Schedule;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface ScheduleRepository extends PagingAndSortingRepository<Schedule, UUID> {
+public interface ScheduleRepository extends JpaRepository<Schedule, UUID> {
 
 	Schedule findByCompetitionId(Long competitionId);
 
@@ -24,5 +25,7 @@ public interface ScheduleRepository extends PagingAndSortingRepository<Schedule,
 	@Query("select distinct s.slug from Season s")
 	List<String> findFilterMenuSeason();
 
-	Page<Schedule> findBySeasonSlugAndSeasonCompetitionYear(Pageable pageable, String slug, Integer year);
+	List<Schedule> findBySeasonSlugAndSeasonCompetitionYear(String slug, Integer year);
+
+	List<Schedule> findByHomeCompetitorTeamIdOrAwayCompetitorTeamId(UUID teamId, UUID teamIdCopy);
 }

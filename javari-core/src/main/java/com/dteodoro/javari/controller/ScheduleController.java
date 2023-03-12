@@ -1,8 +1,10 @@
 package com.dteodoro.javari.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.dteodoro.javari.dto.ScheduleFilterDTO;
+import org.hibernate.validator.constraints.ParameterScriptAssert;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -30,14 +32,14 @@ public class ScheduleController {
 	
 	@GetMapping("/session/{year}/{slug}/bettor/{bettorId}")
 	@CrossOrigin(origins = "${javari.client.front}")
-	public Page<ScheduleDTO> findAll(@PageableDefault(size=20) Pageable pageable,
+	public List<ScheduleDTO> findAll(@PageableDefault(size=20) Pageable pageable,
 									 @PathVariable(name = "year", required = false) String year,
 									 @PathVariable(name = "seasonType", required = false) String slug,
 									 @PathVariable(name = "bettorId",required = true) UUID bettorId){
 		if(!StringUtils.hasText(year)) {
-			return scheduleService.findBySeason(Integer.valueOf(year),slug,bettorId, pageable);
+			return scheduleService.findBySeason(Integer.valueOf(year),slug,bettorId);
 		}
-		return scheduleService.findAll(bettorId,pageable);
+		return scheduleService.findAll(bettorId);
 	}
 
 	@GetMapping("/filters")
@@ -45,5 +47,11 @@ public class ScheduleController {
 		return scheduleService.getScheduleFilters();
 	}
 	
-	
+	@GetMapping("/session/{year}/{slug}/team/{teamId}")
+	public List<ScheduleDTO> findByTeamId(@PathVariable(name ="year",required = true) String year,
+										  @PathVariable(name="slug",required = true) String slug,
+										  @PathVariable(name="teamId",required = true) UUID teamId){
+
+		return scheduleService.findByTeam(teamId,year,slug);
+	}
 }
