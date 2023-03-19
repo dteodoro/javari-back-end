@@ -3,12 +3,10 @@ package com.dteodoro.javari.controller;
 import java.util.List;
 import java.util.UUID;
 
+import com.dteodoro.javari.domain.team.TeamService;
+import com.dteodoro.javari.dto.TeamDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.dteodoro.javari.domain.bettor.BettorService;
 import com.dteodoro.javari.dto.BettorDTO;
@@ -45,6 +43,19 @@ public class BettorController {
 	@GetMapping("/{id}/{roleName}")
 	public boolean hasPermission(@PathVariable(name="id",required = true)UUID bettorId,@PathVariable(name="roleName",required = true) String roleName){
 		return bettorService.hasPermission(bettorId,roleName);
+	}
+
+	@PostMapping("/{id}/favoriteTeam/{teamId}")
+	public TeamDTO setFavoriteTeam(@PathVariable("id") UUID bettorId, @PathVariable("teamId") UUID teamId){
+		return bettorService.setFavoriteTeam(bettorId,teamId);
+	}
+	@GetMapping("/{id}/favoriteTeam")
+	public TeamDTO getFavoriteTeam(@PathVariable("id")UUID bettorId){
+		return bettorService.findFavoriteTeam(bettorId);
+	}
+	@DeleteMapping("/{id}/favoriteTeam/{teamId}")
+	public void removeFavoriteTeam(@PathVariable("id") UUID bettorId,@PathVariable("teamId") UUID teamId){
+		bettorService.setFavoriteTeam(bettorId,null);
 	}
 }
 

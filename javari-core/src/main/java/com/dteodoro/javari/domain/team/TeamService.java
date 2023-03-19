@@ -53,6 +53,10 @@ public class TeamService {
 		return convertToTeamDTO(teamRepo.findById(teamId).orElse(null));
 	}
 
+	public Team findTeamById(UUID teamId){
+		return teamRepo.findById(teamId).orElse(null);
+	}
+
 	public List<StandingDTO> findStandingByConference(NFLConference conference) {
 		List<StandingDTO> standings = new ArrayList<>();
 		Map<NFLDivision, List<Team>> teamsByDisivion = teamRepo.findByConference(conference).orElse(Collections.emptyList()).stream()
