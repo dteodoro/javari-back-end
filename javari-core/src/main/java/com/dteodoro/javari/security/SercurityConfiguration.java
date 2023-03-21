@@ -34,9 +34,10 @@ public class SercurityConfiguration {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.cors().and().csrf().disable() //disable CORS and CSRF 'cause it will be validated by Token
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //disable Session 'cause it will be an STATELESS API
-			.and().authorizeHttpRequests() //Configure HttpRequest 
+			.and().authorizeHttpRequests() //Configure HttpRequest
+			.requestMatchers(HttpMethod.GET,"/actuator/**").permitAll() // permit actuator endpoints
 			.requestMatchers(HttpMethod.POST, "/auth/login","/auth/signIn").permitAll() // permit access to login URI through POST method
-			.anyRequest().authenticated() //any other request must be authenticated 
+			.anyRequest().authenticated() //any other request must be authenticated
 			.and().addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class) // add SecurityFilter to verify token before spring default filter
 			.build(); // build the SercurityFilterChain
 	}
