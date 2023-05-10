@@ -1,0 +1,48 @@
+server:
+  port: 8081
+
+#datasource
+spring:
+  application:
+    name: javari-auth-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/javaridb
+    username: root
+    password: javari
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+        ddl-auto: update
+    show-sql: true
+    generate-ddl: true
+  sql:
+    init.mode: always
+  main:
+    allow-bean-definition-overriding: true
+
+#eureka config
+eureka:
+  instance:
+    prefer-ip-address: false
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE
+
+application:
+  security:
+    jwt:
+      secret-key: 5367566B5970337336763979244226452948404D6351665468576D5A7134743777217A25432A462D4A614E645267556B586E3272357538782F413F4428472B4B
+      expiration: 86400000 # a day
+      refresh-token:
+        expiration: 604800000 # 7 days

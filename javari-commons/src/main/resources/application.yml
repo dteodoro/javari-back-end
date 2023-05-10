@@ -1,0 +1,11 @@
+# Javari Configuration
+javari:
+  client:
+    front: ${JAVARI_DNS_FRONT:http://localhost:3000}
+  uri: http://localhost:8080
+api:
+  security:
+    token:
+      secret: ${JWT_TOKEN:123456789}
+  core:
+    url: http://localhost:8081
