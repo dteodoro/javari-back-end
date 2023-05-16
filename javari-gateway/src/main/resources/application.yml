@@ -17,7 +17,7 @@ spring:
         - id: javari-connector-service
           uri: lb://javari-connector-service
           predicates:
-            - Path=/api/v1/loader/**
+            - Path=/api/v1/connector/loader/**
       globalcors:
         cors-configurations:
           '[/**]':
