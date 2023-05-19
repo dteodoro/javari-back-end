@@ -38,5 +38,16 @@ public class LoaderController {
 		}
 		log.info("NFL Schedule loading finished");
 	}
+
+	@GetMapping("/seasons")
+	public void loadSeasons() {
+		log.info("Loading Seasons by ESPN API...");
+		try {
+			loaderService.loadSeasons();
+		} catch (Exception e) {
+			log.error("Cannot Load NFL Seasons",e);
+		}
+		log.info("NFL Seasons loading finished");
+	}
 	
 }

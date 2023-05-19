@@ -12,7 +12,8 @@ public class EventImportDTO implements Serializable{
 	
 	private String name;
 	private String shortName;
-	private SeasonImportDTO season;
+	private EventSeasonImportDTO season;
+	private WeekImportDTO week;
 	private StatusImportDTO status;
 	private List<CompetitionImportDTO> competitions;
 
@@ -22,16 +23,13 @@ public class EventImportDTO implements Serializable{
 				+ competitions + "]";
 	}
 
-
 	public String getName() {
 		return name;
 	}
 
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
 
 	public String getShortName() {
 		return shortName;
@@ -45,30 +43,24 @@ public class EventImportDTO implements Serializable{
 		this.status = status;
 	}
 
-
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
 	}
 
-
-	public SeasonImportDTO getSeason() {
+	public EventSeasonImportDTO getSeason() {
 		return season;
 	}
 
-
-	public void setSeason(SeasonImportDTO season) {
+	public void setSeason(EventSeasonImportDTO season) {
 		this.season = season;
 	}
-
 
 	public List<CompetitionImportDTO> getCompetitions() {
 		return competitions;
 	}
 
-
 	public void setCompetitions(List<CompetitionImportDTO> competitions) {
 		this.competitions = competitions;
 	}
-
 	
 }

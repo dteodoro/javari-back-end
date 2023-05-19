@@ -5,14 +5,7 @@ import java.util.UUID;
 
 import com.dteodoro.javari.commons.enumeration.SeasonType;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,17 +17,15 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Season {
 
-	@Id @GeneratedValue(strategy = GenerationType.AUTO)	private UUID id;
+	@Id @GeneratedValue(strategy = GenerationType.AUTO)
+	private UUID id;
+	private String label;
 	private String slug;
-	@Enumerated(EnumType.STRING)
-	private SeasonType type;
 	@ManyToOne
 	private Competition competition;
+	@OneToMany
+	private List<SeasonCalendar> seasonCalendars;
 	@OneToMany(mappedBy = "season")
 	private List<Schedule> schedules;
 
-	public Season(String slug){
-		this.slug = slug;
-	}
-	
 }

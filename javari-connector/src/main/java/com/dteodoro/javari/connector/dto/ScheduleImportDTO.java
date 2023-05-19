@@ -19,7 +19,7 @@ public class ScheduleImportDTO implements Serializable, ImportDataDTO {
     private String name;
     private String shortName;
     private LocalDateTime startDate;
-    private SeasonImportDTO season;
+    private EventSeasonImportDTO season;
     private String status;
     private CompetitorImportDTO homeCompetitor;
     private CompetitorImportDTO awayCompetitor;

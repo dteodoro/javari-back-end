@@ -1,48 +1,73 @@
 package com.dteodoro.javari.connector.dto;
 
-import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import com.dteodoro.javari.commons.dto.SeasonDTO;
 import com.dteodoro.javari.commons.enumeration.SeasonType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.util.StringUtils;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SeasonImportDTO implements Serializable,ImportDataDTO {
-	
-	private static final long serialVersionUID = 1L;
-	Integer year;
-	Integer type;
-	String slug;
-	
-	public Integer getYear() {
-		return year;
+public class SeasonImportDTO implements ImportDataDTO {
+
+	String label;
+	Integer value;
+	LocalDateTime startDate;
+	LocalDateTime endDate;
+	List<SeasonCalendarImportDTO> entries;
+
+	public String getLabel() {
+		return label;
 	}
-	public void setYear(Integer year) {
-		this.year = year;
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
-	public Integer getType() {
-		return type;
+
+	public Integer getValue() {
+		return value;
 	}
-	public void setType(Integer type) {
-		this.type = type;
+
+	public void setValue(Integer value) {
+		this.value = value;
 	}
-	public String getSlug() {
-		return slug;
+
+	public LocalDateTime getStartDate() {
+		return startDate;
 	}
-	public void setSlug(String slug) {
-		this.slug = slug;
+
+	public void setStartDate(LocalDateTime startDate) {
+		this.startDate = startDate;
 	}
-	@Override
-	public String toString() {
-		return "SeasonDTO [year=" + year + ", type=" + type + ", slug=" + slug + "]";
+
+	public LocalDateTime getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(LocalDateTime endDate) {
+		this.endDate = endDate;
+	}
+
+	public List<SeasonCalendarImportDTO> getEntries() {
+		return entries;
+	}
+
+	public void setEntries(List<SeasonCalendarImportDTO> entries) {
+		this.entries = entries;
 	}
 
 	@Override
 	public SeasonDTO toDomainDto() {
 		return SeasonDTO.builder()
-				.slug(this.getSlug())
-				.type(SeasonType.of(this.getType()))
-				.competitionYear(this.getYear())
+				.label(this.label)
+				.slug(formatToSlug(this.label))
+				.competitionYear(this.startDate.getYear())
+				.seasonCalendars(entries.stream().map(SeasonCalendarImportDTO::toDomainDto).toList())
 				.build();
+	}
+
+	private String formatToSlug(String label) {
+		return StringUtils.hasText(label) ? label.trim().toLowerCase().replace(" ","_") : null;
 	}
 }

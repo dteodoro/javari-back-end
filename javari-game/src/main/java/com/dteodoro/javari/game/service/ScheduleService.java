@@ -10,11 +10,11 @@ import com.dteodoro.javari.commons.enumeration.ScheduleStatus;
 import com.dteodoro.javari.core.domain.Bet;
 import com.dteodoro.javari.core.domain.Competitor;
 import com.dteodoro.javari.core.domain.Schedule;
+import com.dteodoro.javari.core.domain.Season;
 import com.dteodoro.javari.core.repository.CompetitorRepository;
 import com.dteodoro.javari.core.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +33,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepo;
     private final CompetitorRepository competitorRepo;
     private final TeamService teamService;
+    private final SeasonService seasonService;
     @Lazy private BetService betService;
     private final ModelMapper mapper;
 
@@ -118,6 +119,7 @@ public class ScheduleService {
         Competitor awayCompetitor = mapper.map(getCompetitor(scheduleDto, HomeAway.AWAY), Competitor.class);
         homeCompetitor.setTeam(teamService.findByEspnId(homeCompetitor.getTeam().getEspnId()));
         awayCompetitor.setTeam(teamService.findByEspnId(awayCompetitor.getTeam().getEspnId()));
+        Season season = seasonService.findBySlugAndCompetitionYear(scheduleDto.getSeason().getSlug(),scheduleDto.getSeason().getCompetitionYear());
         return Schedule.builder()
                 .name(scheduleDto.getName())
                 .shortName(scheduleDto.getShortName())
@@ -125,6 +127,7 @@ public class ScheduleService {
                 .status(scheduleDto.getStatus())
                 .homeCompetitor(homeCompetitor)
                 .awayCompetitor(awayCompetitor)
+                .season(season)
                 .build();
     }
 
