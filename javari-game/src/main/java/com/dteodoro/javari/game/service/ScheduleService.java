@@ -1,16 +1,10 @@
 package com.dteodoro.javari.game.service;
 
-import com.dteodoro.javari.commons.dto.BetDTO;
-import com.dteodoro.javari.commons.dto.CompetitorDTO;
-import com.dteodoro.javari.commons.dto.ScheduleDTO;
-import com.dteodoro.javari.commons.dto.ScheduleFilterDTO;
+import com.dteodoro.javari.commons.dto.*;
 
 import com.dteodoro.javari.commons.enumeration.HomeAway;
 import com.dteodoro.javari.commons.enumeration.ScheduleStatus;
-import com.dteodoro.javari.core.domain.Bet;
-import com.dteodoro.javari.core.domain.Competitor;
-import com.dteodoro.javari.core.domain.Schedule;
-import com.dteodoro.javari.core.domain.Season;
+import com.dteodoro.javari.core.domain.*;
 import com.dteodoro.javari.core.repository.CompetitorRepository;
 import com.dteodoro.javari.core.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +13,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -37,22 +28,15 @@ public class ScheduleService {
     @Lazy private BetService betService;
     private final ModelMapper mapper;
 
-    public List<ScheduleDTO> findAll(UUID bettorId) {
+    public List<ScheduleDTO> findByBettorId(UUID bettorId) {
         return scheduleRepo.findAll().stream().map(s -> convertToScheduleDTO(s, bettorId)).toList();
     }
 
     private ScheduleDTO convertToScheduleDTO(Schedule schedule, UUID bettorId) {
         Bet bet = schedule.getBets().stream().filter(s -> s.getBettorId().equals(bettorId)).findFirst().orElse(null);
-        return ScheduleDTO.builder()
-                .id(schedule.getId())
-                .name(schedule.getName())
-                .shortName(schedule.getShortName())
-                .startDate(schedule.getStartDate())
-                .status(schedule.getStatus())
-                .competitors(List.of(mapper.map(schedule.getHomeCompetitor(), CompetitorDTO.class),
-                        mapper.map(schedule.getAwayCompetitor(), CompetitorDTO.class)))
-                .bet(bet != null ? mapper.map(bet, BetDTO.class) : null)
-                .build();
+        ScheduleDTO scheduleDTO = convertToScheduleDTO(schedule);
+        scheduleDTO.setBet(bet != null ? mapper.map(bet, BetDTO.class) : null);
+        return scheduleDTO;
     }
 
     private ScheduleDTO convertToScheduleDTO(Schedule schedule){
@@ -62,8 +46,21 @@ public class ScheduleService {
                 .shortName(schedule.getShortName())
                 .startDate(schedule.getStartDate())
                 .status(schedule.getStatus())
+                .seasonCalendar(convetToSeasonCalendarDTO(schedule.getSeasonCalendar()))
                 .competitors(List.of(mapper.map(schedule.getHomeCompetitor(), CompetitorDTO.class),
                         mapper.map(schedule.getAwayCompetitor(), CompetitorDTO.class)))
+                .build();
+    }
+
+    private SeasonCalendarDTO convetToSeasonCalendarDTO(SeasonCalendar seasonCalendar) {
+        return SeasonCalendarDTO.builder()
+                .season(mapper.map(seasonCalendar.getSeason(),SeasonDTO.class))
+                .startDate(seasonCalendar.getStartDate())
+                .endDate(seasonCalendar.getEndDate())
+                .label(seasonCalendar.getLabel())
+                .alternateLabel(seasonCalendar.getAlternateLabel())
+                .week(seasonCalendar.getWeek())
+                .detail(seasonCalendar.getDetail())
                 .build();
     }
 
@@ -79,7 +76,10 @@ public class ScheduleService {
     public void save(Schedule schedule) {
         competitorRepo.save(schedule.getHomeCompetitor());
         competitorRepo.save(schedule.getAwayCompetitor());
-        scheduleRepo.save(schedule);
+        Schedule scheduleSaved = scheduleRepo.save(schedule);
+        SeasonCalendar seasonCalendar = scheduleSaved.getSeasonCalendar();
+        seasonCalendar.getSchedules().add(schedule);
+        seasonService.updateCalendar(seasonCalendar);
     }
 
     public void update(Schedule currentSchedule) {
@@ -90,19 +90,21 @@ public class ScheduleService {
 
     }
 
-    public List<ScheduleDTO> findBySeason(Integer year, String slug, UUID bettorId) {
-        List<ScheduleDTO> schedules = scheduleRepo.findBySeasonSlugAndSeasonCompetitionYear( slug, year).stream().map(s -> convertToScheduleDTO(s, bettorId)).toList();
-        Map<UUID, BetDTO> betMap = betService.getLastBets(bettorId).stream().collect(Collectors.toMap(BetDTO::getScheduleId, Function.identity()));
-        schedules.forEach(s -> s.setBet(betMap.get(s.getId())));
-        return schedules;
-    }
-
     public ScheduleFilterDTO getScheduleFilters() {
         return new ScheduleFilterDTO(scheduleRepo.findFilterMenuYear(), scheduleRepo.findFilterMenuSeason());
     }
 
-    public List<ScheduleDTO> findByTeam(UUID teamId, String year, String slug) {
-        return scheduleRepo.findByHomeCompetitorTeamIdOrAwayCompetitorTeamId(teamId, teamId).stream().map(this::convertToScheduleDTO).toList();
+    public List<ScheduleBySeasonDTO> findByTeam(UUID teamId, Integer year) {
+        List<ScheduleBySeasonDTO> scheduleBySeason = new ArrayList<>();
+        List<ScheduleDTO> scheulesDto = scheduleRepo.findByHomeCompetitorTeamIdOrAwayCompetitorTeamIdAndSeasonCalendarSeasonCompetitionYear(teamId,teamId, year)
+                                                        .stream()
+                                                        .filter(s -> s.getStatus().equals(ScheduleStatus.STATUS_FINAL))
+                                                        .map(this::convertToScheduleDTO).toList();
+        return scheulesDto.stream()
+                .collect(Collectors.groupingBy(s -> s.getSeasonCalendar().getSeason().getLabel()))
+                .entrySet().stream()
+                .map(entry->new ScheduleBySeasonDTO(entry.getKey(),entry.getValue())).toList();
+
     }
 
     public void saveOrUpdate(ScheduleDTO scheduleDto) {
@@ -119,15 +121,19 @@ public class ScheduleService {
         Competitor awayCompetitor = mapper.map(getCompetitor(scheduleDto, HomeAway.AWAY), Competitor.class);
         homeCompetitor.setTeam(teamService.findByEspnId(homeCompetitor.getTeam().getEspnId()));
         awayCompetitor.setTeam(teamService.findByEspnId(awayCompetitor.getTeam().getEspnId()));
-        Season season = seasonService.findBySlugAndCompetitionYear(scheduleDto.getSeason().getSlug(),scheduleDto.getSeason().getCompetitionYear());
+        SeasonCalendar seasonCalendar = seasonService.findByWeekAndSeasonSlugAndSeasonCompetitionYear(
+                                                        scheduleDto.getWeek(),
+                                                        scheduleDto.getSeason().getSlug(),
+                                                        scheduleDto.getSeason().getCompetitionYear());
         return Schedule.builder()
+                .competitionId(scheduleDto.getCompetitionId())
                 .name(scheduleDto.getName())
                 .shortName(scheduleDto.getShortName())
                 .startDate(scheduleDto.getStartDate())
                 .status(scheduleDto.getStatus())
                 .homeCompetitor(homeCompetitor)
                 .awayCompetitor(awayCompetitor)
-                .season(season)
+                .seasonCalendar(seasonCalendar)
                 .build();
     }
 

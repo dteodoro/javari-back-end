@@ -26,11 +26,12 @@ public class ScheduleDTO implements DomainDTO{
 	private String shortName;
 	@NotNull
 	private LocalDateTime startDate;
-	@NotNull
-	private SeasonDTO season;
+	private SeasonCalendarDTO seasonCalendar;
 	@NotNull
 	private ScheduleStatus status;
 	@NotEmpty
 	private List<CompetitorDTO> competitors;
+	private Integer week;
+	private SeasonDTO season;
 	private BetDTO bet;
 }

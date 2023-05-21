@@ -23,6 +23,7 @@ public class ScheduleImportDTO implements Serializable, ImportDataDTO {
     private String status;
     private CompetitorImportDTO homeCompetitor;
     private CompetitorImportDTO awayCompetitor;
+    private Integer week;
 
     @Override
     public ScheduleDTO toDomainDto() {
@@ -33,6 +34,7 @@ public class ScheduleImportDTO implements Serializable, ImportDataDTO {
                 .startDate(this.getStartDate())
                 .status(ScheduleStatus.valueOf(this.getStatus()))
                 .season(this.getSeason().toDomainDto())
+                .week(this.getWeek())
                 .competitors(
                         List.of(this.getHomeCompetitor().toDomainDto(),
                                 this.getAwayCompetitor().toDomainDto()

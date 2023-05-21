@@ -68,6 +68,6 @@ public class SeasonImportDTO implements ImportDataDTO {
 	}
 
 	private String formatToSlug(String label) {
-		return StringUtils.hasText(label) ? label.trim().toLowerCase().replace(" ","_") : null;
+		return StringUtils.hasText(label) ? label.trim().toLowerCase().replace(" ","-") : null;
 	}
 }

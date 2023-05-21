@@ -3,8 +3,6 @@ package com.dteodoro.javari.core.domain;
 import java.util.List;
 import java.util.UUID;
 
-import com.dteodoro.javari.commons.enumeration.SeasonType;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,9 +21,7 @@ public class Season {
 	private String slug;
 	@ManyToOne
 	private Competition competition;
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
 	private List<SeasonCalendar> seasonCalendars;
-	@OneToMany(mappedBy = "season")
-	private List<Schedule> schedules;
 
 }

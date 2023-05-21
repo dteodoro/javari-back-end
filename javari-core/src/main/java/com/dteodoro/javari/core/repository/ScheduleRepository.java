@@ -3,6 +3,8 @@ package com.dteodoro.javari.core.repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import com.dteodoro.javari.commons.enumeration.ScheduleStatus;
 import com.dteodoro.javari.core.domain.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,8 +21,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, UUID> {
     List<String> findFilterMenuYear();
 	@Query("select distinct s.slug from Season s")
 	List<String> findFilterMenuSeason();
+	List<Schedule> findByHomeCompetitorTeamIdOrAwayCompetitorTeamIdAndSeasonCalendarSeasonCompetitionYear( UUID teamId, UUID teamId1, Integer year);
 
-	List<Schedule> findBySeasonSlugAndSeasonCompetitionYear(String slug, Integer year);
-
-	List<Schedule> findByHomeCompetitorTeamIdOrAwayCompetitorTeamId(UUID teamId, UUID teamIdCopy);
 }

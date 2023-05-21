@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 
 @Data
 @Builder
@@ -24,8 +25,10 @@ public class Schedule {
 	private String name;
 	private String shortName;
 	private LocalDateTime startDate;
-	@ManyToOne
-	private Season season;
+
+	@OneToOne(fetch = FetchType.EAGER)
+	private SeasonCalendar seasonCalendar;
+
 	@Enumerated(EnumType.STRING)
 	private ScheduleStatus status;
 	

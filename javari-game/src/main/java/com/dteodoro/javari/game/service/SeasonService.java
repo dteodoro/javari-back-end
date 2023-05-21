@@ -25,12 +25,8 @@ public class SeasonService {
 		return seasonRepo.save(season);
 	}
 
-	public Season findBySlugAndCompetitionYear(String seasonSlug, Integer competitionYear) {
-		return seasonRepo.findBySlugAndCompetitionYear(seasonSlug,competitionYear).orElse(null);
-	}
-
 	public void save(SeasonDTO seasonDTO) {
-		Season currentSeason = findBySlugAndCompetitionYear(seasonDTO.getSlug(),seasonDTO.getCompetitionYear());
+		Season currentSeason = seasonRepo.findByLabelAndCompetitionYear(seasonDTO.getSlug(),seasonDTO.getCompetitionYear()).orElse(null);
 		if(currentSeason == null){
 			Season seasonSaved = create(convetToSeason(seasonDTO));
 			createSeasonCalendar(seasonDTO.getSeasonCalendars(),seasonSaved);
@@ -54,4 +50,16 @@ public class SeasonService {
 				});
 	}
 
+	public void update(Season season) {
+		seasonRepo.save(season);
+	}
+
+
+	public void updateCalendar(SeasonCalendar seasonCalendar) {
+		seasonCalendarRepo.save(seasonCalendar);
+	}
+
+	public SeasonCalendar findByWeekAndSeasonSlugAndSeasonCompetitionYear(Integer week, String seasonSlug, Integer competitionYear) {
+		return seasonCalendarRepo.findByWeekAndSeasonSlugAndSeasonCompetitionYear(week,seasonSlug,competitionYear);
+	}
 }

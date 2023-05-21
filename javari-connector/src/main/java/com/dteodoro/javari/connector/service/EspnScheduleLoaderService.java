@@ -70,6 +70,7 @@ public class EspnScheduleLoaderService implements ScheduleLoader {
 				.shortName(event.getShortName())
 				.startDate(event.getCompetitions().get(0).getStartDate())
 				.season(event.getSeason())
+				.week(event.getWeek().getNumber())
 				.status(event.getStatus().getType().getName())
 				.homeCompetitor(competitors.get(HomeAway.HOME))
 				.awayCompetitor(competitors.get(HomeAway.AWAY))

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -19,9 +20,10 @@ public class SeasonCalendarDTO implements DomainDTO{
 	@NotBlank
 	String detail;
 	@NotNull
-	Integer value;
+	Integer week;
 	@NotNull
 	LocalDateTime startDate;
 	@NotNull
 	LocalDateTime endDate;
+	SeasonDTO season;
 }

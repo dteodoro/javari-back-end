@@ -2,7 +2,6 @@ package com.dteodoro.javari.connector.dto;
 
 import com.dteodoro.javari.commons.dto.SeasonCalendarDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;
 
@@ -70,7 +69,7 @@ public class SeasonCalendarImportDTO implements ImportDataDTO{
 				.label(this.label)
 				.alternateLabel(this.alternateLabel)
 				.detail(this.detail)
-				.value(this.value)
+				.week(this.value)
 				.startDate(this.startDate)
 				.endDate(this.endDate)
 				.build();

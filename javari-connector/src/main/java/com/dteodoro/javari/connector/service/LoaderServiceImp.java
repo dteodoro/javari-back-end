@@ -35,8 +35,8 @@ public class LoaderServiceImp implements LoaderService{
     @Override
     public void loadSchedules() {
         List<ScheduleImportDTO> importSchedules = (List<ScheduleImportDTO>) scheduleLoader.load();
+        String accessToken = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
         for (var scheduleDTO: importSchedules.stream().map(ScheduleImportDTO::toDomainDto).toList()) {
-            String accessToken = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
             gameClient.saveSchedule(accessToken,scheduleDTO);
         }
         //TODO implements fallback methods

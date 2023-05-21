@@ -1,5 +1,6 @@
 package com.dteodoro.javari.game.controller;
 
+import com.dteodoro.javari.commons.dto.ScheduleBySeasonDTO;
 import com.dteodoro.javari.commons.dto.ScheduleDTO;
 import com.dteodoro.javari.commons.dto.ScheduleFilterDTO;
 
@@ -9,10 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -27,10 +28,8 @@ public class ScheduleController {
 									 @PathVariable(name = "year", required = false) String year,
 									 @PathVariable(name = "seasonType", required = false) String slug,
 									 @PathVariable(name = "bettorId",required = true) UUID bettorId){
-		if(!StringUtils.hasText(year)) {
-			return scheduleService.findBySeason(Integer.valueOf(year),slug,bettorId);
-		}
-		return scheduleService.findAll(bettorId);
+
+		return scheduleService.findByBettorId(bettorId);
 	}
 
 	@GetMapping("/filters")
@@ -39,11 +38,11 @@ public class ScheduleController {
 	}
 	
 	@GetMapping("/session/{year}/{slug}/team/{teamId}")
-	public List<ScheduleDTO> findByTeamId(@PathVariable(name ="year",required = true) String year,
-										  @PathVariable(name="slug",required = true) String slug,
-										  @PathVariable(name="teamId",required = true) UUID teamId){
+	public List<ScheduleBySeasonDTO> findByTeamId(@PathVariable(name ="year",required = true) String year,
+	                                                  @PathVariable(name="slug",required = true) String slug,
+	                                                  @PathVariable(name="teamId",required = true) UUID teamId){
 
-		return scheduleService.findByTeam(teamId,year,slug);
+		return scheduleService.findByTeam(teamId,Integer.valueOf(year));
 	}
 
 	@PostMapping

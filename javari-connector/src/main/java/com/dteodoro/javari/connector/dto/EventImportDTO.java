@@ -62,5 +62,12 @@ public class EventImportDTO implements Serializable{
 	public void setCompetitions(List<CompetitionImportDTO> competitions) {
 		this.competitions = competitions;
 	}
-	
+
+	public WeekImportDTO getWeek() {
+		return week;
+	}
+
+	public void setWeek(WeekImportDTO week) {
+		this.week = week;
+	}
 }
