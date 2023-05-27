@@ -1,7 +1,7 @@
 package com.dteodoro.javari.game.service;
 
-import com.dteodoro.javari.core.domain.Team;
-import com.dteodoro.javari.core.domain.TeamForm;
+import com.dteodoro.javari.commons.enumeration.ScheduleStatus;
+import com.dteodoro.javari.core.domain.*;
 import com.dteodoro.javari.commons.dto.ConferenceTeamsDTO;
 import com.dteodoro.javari.commons.dto.DivisionTeamDTO;
 import com.dteodoro.javari.commons.dto.StandingDTO;
@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -64,10 +65,32 @@ public class TeamService {
 		return standings;
 	}
 	
-	public void updateTeamScore() {
-		//TODO Atualizar a pontuação dos times
+	public void updateTeamScore(Schedule currentSchedule) {
+		if(currentSchedule.getStatus().equals(ScheduleStatus.STATUS_FINAL)){
+			Competitor homeCompetitor = currentSchedule.getHomeCompetitor();
+			Competitor awayCompetitor = currentSchedule.getAwayCompetitor();
+			boolean tie = homeCompetitor.getWinner().equals(awayCompetitor.getWinner());
+			boolean sameConference = homeCompetitor.getTeam().getConference().equals(awayCompetitor.getTeam().getConference());
+			updateScore(homeCompetitor.getTeam(),sameConference,homeCompetitor.getWinner(), tie);
+			updateScore(awayCompetitor.getTeam(),sameConference,homeCompetitor.getWinner(), tie);
+		}
 	}
-	
+
+	private void updateScore(Team team,boolean sameConference, boolean winner, boolean tie) {
+		if(team.getScore() == null){
+			team.setScore(new TeamScore());
+		}
+		TeamScore score  = team.getScore();
+		score.setWins(winner ? score.getWins() + 1 : score.getWins());
+		score.setLosses(winner ? score.getLosses() : score.getLosses() + 1);
+		score.setTies(tie ? score.getTies() + 1 : score.getTies());
+		score.setWinsOnConference(sameConference ? score.getWinsOnConference() + 1 : score.getWinsOnConference());
+		score.updateScoreSummary();
+		score.updateWinPercentage();
+		teamRepo.save(team);
+	}
+
+
 	private Specification<Team> getTeamSpec(TeamForm teamForm) {
 		return (root, query, builder) -> {
 			List<Predicate> predicates = new ArrayList<>();
@@ -86,7 +109,11 @@ public class TeamService {
 	}
 	
 	private TeamDTO convertToTeamDTO(Team team) {
-		return modelMapper.map(team, TeamDTO.class);
+		TeamDTO teamDTO = modelMapper.map(team, TeamDTO.class);
+		if(!StringUtils.hasText(teamDTO.getScoreScoreSummary())){
+			teamDTO.setScoreScoreSummary("0-0-0");
+		}
+		return teamDTO;
 	}
 
 	public List<ConferenceTeamsDTO> findByTypes(NFLConference conferenceType, NFLDivision divisionType)  {

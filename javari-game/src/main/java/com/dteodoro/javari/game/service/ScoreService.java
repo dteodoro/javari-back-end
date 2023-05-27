@@ -17,9 +17,11 @@ public class ScoreService {
 
     public void setPoint(Bet bet) {
         Score currentScore = scoreRepo.findByBettorId(bet.getBettorId()).orElse(null);
-        currentScore.setPoints(currentScore.getPoints() + bet.getBet().getScore());
-        currentScore.setNumberOfHits(currentScore.getNumberOfHits() + 1);
-        scoreRepo.save(currentScore);
+        if(currentScore != null ) {
+            currentScore.setPoints(currentScore.getPoints() + bet.getBet().getScore());
+            currentScore.setNumberOfHits(currentScore.getNumberOfHits() + 1);
+            scoreRepo.save(currentScore);
+        }
     }
 
     public Score save(Score score) {

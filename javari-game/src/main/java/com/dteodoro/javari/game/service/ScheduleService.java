@@ -87,7 +87,7 @@ public class ScheduleService {
             betService.setWin(currentSchedule);
         }
         scheduleRepo.save(currentSchedule);
-
+        teamService.updateTeamScore(currentSchedule);
     }
 
     public ScheduleFilterDTO getScheduleFilters() {
