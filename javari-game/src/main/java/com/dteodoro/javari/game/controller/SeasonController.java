@@ -1,14 +1,14 @@
 package com.dteodoro.javari.game.controller;
 
+import com.dteodoro.javari.commons.dto.SeasonFilterDTO;
 import com.dteodoro.javari.commons.dto.SeasonDTO;
 import com.dteodoro.javari.game.service.SeasonService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,5 +22,11 @@ public class SeasonController {
 		seasonService.save(seasonDTO);
 		return ResponseEntity.ok().build();
 	}
+
+	@GetMapping("/filters")
+	public List<SeasonFilterDTO> getSeasonFilters(){
+		return seasonService.getSeasonFilters();
+	}
+
 
 }

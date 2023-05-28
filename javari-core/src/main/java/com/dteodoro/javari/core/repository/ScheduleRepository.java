@@ -17,10 +17,18 @@ public interface ScheduleRepository extends JpaRepository<Schedule, UUID> {
 
 	Schedule save(Schedule schedule);
 
-	@Query("select distinct c.year from Competition c")
-    List<String> findFilterMenuYear();
-	@Query("select distinct s.slug from Season s")
-	List<String> findFilterMenuSeason();
 	List<Schedule> findByHomeCompetitorTeamIdOrAwayCompetitorTeamIdAndSeasonCalendarSeasonCompetitionYear( UUID teamId, UUID teamId1, Integer year);
 
+	@Query("select s from Schedule s join fetch SeasonCalendar sc on s.seasonCalendar.id = sc.id " +
+			" join fetch Season season on sc.season.id = season.id where season.id = :seasonId " +
+	        " order by s.startDate ")
+	List<Schedule> findBySeasonId(UUID seasonId);
+
+	@Query("select s from Schedule s join fetch SeasonCalendar sc on s.seasonCalendar.id = sc.id " +
+			" join fetch Season season on sc.season.id = season.id where season.id = :seasonId and sc.id = :weekId " +
+			" order by s.startDate ")
+	List<Schedule> findBySeasonIdAndWeekId(UUID seasonId,UUID weekId);
+
+	@Query("select s from Schedule s order by s.startDate")
+	List<Schedule> findAllOrderByStartDate();
 }

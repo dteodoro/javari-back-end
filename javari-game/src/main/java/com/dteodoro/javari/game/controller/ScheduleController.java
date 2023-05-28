@@ -2,7 +2,6 @@ package com.dteodoro.javari.game.controller;
 
 import com.dteodoro.javari.commons.dto.ScheduleBySeasonDTO;
 import com.dteodoro.javari.commons.dto.ScheduleDTO;
-import com.dteodoro.javari.commons.dto.ScheduleFilterDTO;
 
 import com.dteodoro.javari.game.service.ScheduleService;
 import jakarta.validation.Valid;
@@ -13,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -22,21 +20,17 @@ import java.util.UUID;
 public class ScheduleController {
 	
 	private final ScheduleService scheduleService;
+
+	///schedules/session/${selectedSeason}/week/${selectedWeek}/bettor/${bettor?.userId}
 	
-	@GetMapping("/session/{year}/{slug}/bettor/{bettorId}")
+	@GetMapping
 	public List<ScheduleDTO> findAll(@PageableDefault(size=20) Pageable pageable,
-									 @PathVariable(name = "year", required = false) String year,
-									 @PathVariable(name = "seasonType", required = false) String slug,
-									 @PathVariable(name = "bettorId",required = true) UUID bettorId){
-
-		return scheduleService.findByBettorId(bettorId);
+									 @RequestParam(name = "season", required = false) UUID seasonId,
+									 @RequestParam(name = "week", required = false) UUID weekId,
+									 @RequestParam(name = "bettor",required = true) UUID bettorId){
+		return scheduleService.findAllSchedules(bettorId,seasonId,weekId);
 	}
 
-	@GetMapping("/filters")
-	public ScheduleFilterDTO getScheduleFilters(){
-		return scheduleService.getScheduleFilters();
-	}
-	
 	@GetMapping("/session/{year}/{slug}/team/{teamId}")
 	public List<ScheduleBySeasonDTO> findByTeamId(@PathVariable(name ="year",required = true) String year,
 	                                                  @PathVariable(name="slug",required = true) String slug,

@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
@@ -90,10 +91,6 @@ public class ScheduleService {
         teamService.updateTeamScore(currentSchedule);
     }
 
-    public ScheduleFilterDTO getScheduleFilters() {
-        return new ScheduleFilterDTO(scheduleRepo.findFilterMenuYear(), scheduleRepo.findFilterMenuSeason());
-    }
-
     public List<ScheduleBySeasonDTO> findByTeam(UUID teamId, Integer year) {
         List<ScheduleBySeasonDTO> scheduleBySeason = new ArrayList<>();
         List<ScheduleDTO> scheulesDto = scheduleRepo.findByHomeCompetitorTeamIdOrAwayCompetitorTeamIdAndSeasonCalendarSeasonCompetitionYear(teamId,teamId, year)
@@ -150,5 +147,19 @@ public class ScheduleService {
 
     private CompetitorDTO getCompetitor(ScheduleDTO schedule, HomeAway homeAway) {
         return schedule.getCompetitors().stream().filter(c -> c.getHomeAway().equals(homeAway)).findFirst().orElse(null);
+    }
+
+    public List<ScheduleDTO> findAllSchedules(UUID bettorId, UUID seasonId, UUID weekId) {
+        List<Schedule> schedules;
+        if (seasonId != null) {
+            if (weekId != null) {
+                schedules = scheduleRepo.findBySeasonIdAndWeekId(seasonId,weekId);
+            } else {
+                schedules = scheduleRepo.findBySeasonId(seasonId);
+            }
+        } else {
+            schedules = scheduleRepo.findAllOrderByStartDate();
+        }
+        return schedules.stream().map(s -> convertToScheduleDTO(s, bettorId)).toList();
     }
 }
