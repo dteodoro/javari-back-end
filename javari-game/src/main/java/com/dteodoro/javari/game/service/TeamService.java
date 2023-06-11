@@ -72,7 +72,7 @@ public class TeamService {
 			boolean tie = homeCompetitor.getWinner().equals(awayCompetitor.getWinner());
 			boolean sameConference = homeCompetitor.getTeam().getConference().equals(awayCompetitor.getTeam().getConference());
 			updateScore(homeCompetitor.getTeam(),sameConference,homeCompetitor.getWinner(), tie);
-			updateScore(awayCompetitor.getTeam(),sameConference,homeCompetitor.getWinner(), tie);
+			updateScore(awayCompetitor.getTeam(),sameConference,awayCompetitor.getWinner(), tie);
 		}
 	}
 
