@@ -1,9 +1,10 @@
 pipeline {
     agent any
     stages {
-        stage('Build') {
+        stage('Build Module Auth') {
             steps {
-                echo 'Building..'
+                echo 'Building javari-auth..'
+                sh './javari-auth/.mvnw .'
             }
         }
         stage('Test') {
