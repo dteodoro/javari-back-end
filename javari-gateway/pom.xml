@@ -12,7 +12,7 @@
     <artifactId>javari-gateway</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>javari-gateway</name>
-
+    <packaging>jar</packaging>
     <properties>
         <java.version>17</java.version>
         <netflix-eureka-client.version>4.0.1</netflix-eureka-client.version>
@@ -35,12 +35,26 @@
             <artifactId>netty-all</artifactId>
         </dependency>
     </dependencies>
+
     <build>
+        <finalName>${project.name}App</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+
 </project>

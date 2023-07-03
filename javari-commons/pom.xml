@@ -9,8 +9,10 @@
     <artifactId>javari-commons</artifactId>
     <name>javari-commons</name>
     <description>Javari Commons</description>
+    <packaging>jar</packaging>
     <properties>
         <openfeign.version>4.0.1</openfeign.version>
+        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
     </properties>
     <dependencies>
         <dependency>
