@@ -5,8 +5,10 @@ pipeline {
             git 'https://github.com/dteodoro/javari-back-end.git'
         }
         stage('Build - Java Auth') {
-            sh "java -version"
-            sh "./javari-auth/.mvnw clean package -DskipTests"
+            dir('javari-auth'){
+                sh "java -version"
+                sh ".mvnw clean package -DskipTests"
+            }
         }
         stage('Test') {
             steps {
