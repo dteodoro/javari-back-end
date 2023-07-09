@@ -2,7 +2,11 @@ pipeline {
     agent any
     stages {
         stage('Checkout') {
-            git 'https://github.com/dteodoro/javari-back-end.git'
+            steps {
+                git branch: 'main'
+                    credentialId: 'dteodoro-github'
+                    url: 'https://github.com/dteodoro/javari-back-end.git'
+            }
         }
         stage('Build - Java Auth') {
             dir('javari-auth'){
