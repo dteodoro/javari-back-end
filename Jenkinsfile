@@ -1,19 +1,22 @@
 pipeline {
-    agent any 
+    agent any
+    
     stages {
-        stage('Build') { 
+        stage('Checkout') {
             steps {
-                echo 'building app'
+                checkout scm
             }
         }
-        stage('Test') { 
+        
+        stage('Build - Javari Auth') {
             steps {
-                echo 'testing app'
+                sh './javari-auth/.mvnw clean package'
             }
         }
-        stage('Deploy') { 
+        
+        stage('Deploy') {
             steps {
-                echo 'deploying app'
+                sh 'echo deploying'
             }
         }
     }
