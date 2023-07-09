@@ -1,11 +1,12 @@
 pipeline {
     agent any
     stages {
-        stage('Build Module Auth') {
-            steps {
-                echo 'Building javari-auth..'
-                sh './javari-auth/.mvnw .'
-            }
+        stage('Checkout') {
+            git 'https://github.com/dteodoro/javari-back-end.git'
+        }
+        stage('Build - Java Auth') {
+            sh "java -version"
+            sh "./javari-auth/.mvnw clean package -DskipTests"
         }
         stage('Test') {
             steps {
