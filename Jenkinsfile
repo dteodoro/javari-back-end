@@ -4,7 +4,7 @@ pipeline {
     stage('Checkout') {
       steps {
         git branch: 'main',
-            credentialId: 'dteodoro-github',
+            credentialsId: 'dteodoro-github',
             url: 'https://github.com/dteodoro/javari-back-end.git'
       }
     }
