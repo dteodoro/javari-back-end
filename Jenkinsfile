@@ -1,14 +1,27 @@
 pipeline {
   agent any
   stages {
-    stage('Build') {
+    stage('Checkout') {
       steps {
-        echo 'Building..'
+        git branch: 'main'
+            credentialId: 'dteodoro-github'
+            url: 'https://github.com/dteodoro/javari-back-end.git'
       }
     }
-    stage('Test') {
+    stage('Build') {
       steps {
-        echo 'Testing..'
+        echo 'Building Auth Module..'
+        dir('javari-auth'){
+          sh "java -version"
+          sh ".mvnw clean package -DskipTests"
+        }
+      }
+      steps {
+        echo 'Building Connector Module..'
+        dir('javari-connector'){
+          sh "java -version"
+          sh ".mvnw clean package -DskipTests"
+        }
       }
      }
      stage('Deploy') {
