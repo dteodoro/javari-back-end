@@ -11,7 +11,7 @@ pipeline {
     stage('Build Javari Commons') {
       steps {
         echo 'Build Javari Commons...'
-        dir('javari-core'){
+        dir('javari-commons'){
           sh "./mvnw clean package -DskipTests"
         }
       }
