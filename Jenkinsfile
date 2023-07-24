@@ -13,7 +13,7 @@ pipeline {
         echo 'Building Auth Module..'
         dir('javari-auth'){
           sh "java -version"
-          sh ".mvnw clean package -DskipTests"
+          sh "./mvnw clean package -DskipTests"
         }
       }
     }
@@ -22,7 +22,7 @@ pipeline {
         echo 'Building Connector Module..'
         dir('javari-connector'){
           sh "java -version"
-          sh ".mvnw clean package -DskipTests"
+          sh "./mvnw clean package -DskipTests"
         }
       }
      }
