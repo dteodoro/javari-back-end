@@ -8,7 +8,7 @@ pipeline {
             url: 'https://github.com/dteodoro/javari-back-end.git'
       }
     }
-    stage('Build') {
+    stage('Build Auth') {
       steps {
         echo 'Building Auth Module..'
         dir('javari-auth'){
@@ -16,6 +16,8 @@ pipeline {
           sh ".mvnw clean package -DskipTests"
         }
       }
+    }
+    stage('Build Connector') {
       steps {
         echo 'Building Connector Module..'
         dir('javari-connector'){
