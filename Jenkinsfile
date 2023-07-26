@@ -12,7 +12,7 @@ pipeline {
       steps {
         echo 'Build Javari Commons...'
         dir('javari-commons'){
-          sh "./mvnw clean package -DskipTests"
+          sh "mvn clean package -DskipTests"
         }
       }
     }
@@ -20,7 +20,7 @@ pipeline {
       steps {
         echo 'Build Javari Core...'
         dir('javari-core'){
-          sh "./mvnw clean package -DskipTests"
+          sh "mvn clean package -DskipTests"
         }
       }
     }
@@ -29,7 +29,7 @@ pipeline {
         echo 'Building Auth Module..'
         dir('javari-auth'){
           sh "java -version"
-          sh "./mvnw clean package -DskipTests"
+          sh "mvn clean package -DskipTests"
         }
       }
     }
@@ -38,7 +38,7 @@ pipeline {
         echo 'Building Connector Module..'
         dir('javari-connector'){
           sh "java -version"
-          sh "./mvnw clean package -DskipTests"
+          sh "mvn clean package -DskipTests"
         }
       }
      }
