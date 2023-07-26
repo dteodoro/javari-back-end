@@ -4,7 +4,7 @@
         <groupId>com.dteodoro.javari</groupId>
         <artifactId>javari-back-end</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath>pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>javari-commons</artifactId>
     <name>javari-commons</name>
