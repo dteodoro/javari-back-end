@@ -16,7 +16,7 @@ pipeline {
         echo 'Build Javari'
         sh "pwd"
         sh "ls -la"
-        sh "mvn clean package -DskipTests"
+        sh "./mvn clean package -DskipTests"
       }
     }
      stage('Deploy') {
