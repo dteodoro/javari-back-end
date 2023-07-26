@@ -14,6 +14,7 @@ pipeline {
     stage('Build Javari') {
       steps {
         echo 'Build Javari'
+        pwd
         sh "mvn clean package -DskipTests"
       }
     }
