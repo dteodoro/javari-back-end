@@ -10,7 +10,7 @@ pipeline {
     }
     stage('Build Javari Commons') {
       steps {
-        echo 'Build Javari Commons...'
+        echo 'Build Javari Commons 2...'
         dir('javari-commons'){
           sh "mvn clean package -DskipTests"
         }
