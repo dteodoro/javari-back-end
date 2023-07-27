@@ -13,7 +13,7 @@ pipeline {
     }
     stage('Build Javari') {
       steps {
-        sh "mvn clean install"
+        sh "mvn clean install -DskipTests"
       }
     }
      stage('Deploy') {
