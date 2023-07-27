@@ -13,10 +13,7 @@ pipeline {
     }
     stage('Build Javari') {
       steps {
-        echo 'Build Javari'
-        sh "pwd"
-        sh "ls -la"
-        sh "mvn clean package -DskipTests"
+        sh "mvn clean install"
       }
     }
      stage('Deploy') {
