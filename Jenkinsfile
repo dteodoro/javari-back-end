@@ -19,6 +19,7 @@ pipeline {
      stage('Deploy') {
        steps {
          sh "ls -la"
+         sh "cd javari-auth ls -la"
          echo 'Deploying....ES2'
        }
      }
