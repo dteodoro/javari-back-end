@@ -23,14 +23,14 @@ pipeline {
      stage('Deploy on EC2') {
        steps {
          sshagent(credentials : ['javari-aws-prd']){
-           echo "Sand files to Server" 
-           sh "scp ./**/target/*App.jar ${sshUser}@${sshServer}/home/ubuntu/build/back "
+           echo "Send files to Server" 
+           sh "scp ./**/target/*App.jar ${sshUser}@${sshServer}/home/ubuntu/build/back/ "
            echo "Stop current service "
            sh "ssh ${sshUser}@${sshServer} systemctl stop javari-auth javari-game javari-connector javari-gateway javari-discovery "
            echo "Rename current jar to old"
            sh "ssh ${sshUser}@${sshServer} mv /opt/applications/javari*.jar /app/bkp/ "
            echo "Copy new Jar to Applications folder"
-           sh "ssh ${sshUser}@${sshServer} cp /home/ubuntu/build/backjavari*.jar /opt/applications/ "
+           sh "ssh ${sshUser}@${sshServer} cp /home/ubuntu/build/back/javari*.jar /opt/applications/ "
            echo "Add permission to exec"
            sh "ssh ${sshUser}@${sshServer} chmod +x /opt/applications/javari*.jar "
            sh "ssh ${sshUser}@${sshServer} chown ubuntu /opt/applications/javari*.jar " 
