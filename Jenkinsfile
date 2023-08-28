@@ -24,7 +24,7 @@ pipeline {
        steps {
          sshagent(credentials : ['javari-aws-prd']){
            echo "Send files to Server" 
-           sh "scp ./**/target/*App.jar ${sshUser}@${sshServer}/home/ubuntu/build/back/ "
+           sh "scp ./**/target/*App.jar ${sshUser}@${sshServer}:/home/ubuntu/build/back/ "
            echo "Stop current service "
            sh "ssh ${sshUser}@${sshServer} systemctl stop javari-auth javari-game javari-connector javari-gateway javari-discovery "
            echo "Rename current jar to old"
