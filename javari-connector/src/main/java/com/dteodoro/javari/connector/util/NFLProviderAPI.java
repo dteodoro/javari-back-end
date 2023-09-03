@@ -4,8 +4,8 @@ import lombok.Getter;
 
 public enum NFLProviderAPI {
 	
-	TEAMS_API("http://site.api.espn.com/apis/site/v2/sports/football/nfl/teams"),
-	SCHEDULES_API("http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard");
+	TEAMS_API("https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams"),
+	SCHEDULES_API("https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard");
 
 	@Getter 
 	private String uri;
