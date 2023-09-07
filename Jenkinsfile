@@ -2,6 +2,10 @@ pipeline {
   tools {
     maven 'maven'
   }
+  environment {
+    sshServer = 'ec2-13-58-13-55.us-east-2.compute.amazonaws.com'
+    sshUser = 'ubuntu'
+  }
   agent any
   stages {
     stage('Checkout') {
@@ -18,25 +22,27 @@ pipeline {
     }
      stage('Deploy on EC2') {
        steps {
-         echo "Sand files to Server" 
-         sh "scp ./**/target/*App.jar ${sshUser}@${sshServer}/build/javari-back-end/ "
-         echo "Stop current service "
-         sh "sshpass -p ${sshPassword} ssh ${sshUser}@${sshServer} systemctl stop javari-auth javari-game javari-connector javari-gateway javari-discovery "
-         echo "Rename current jar to old"
-         sh "sshpass -p ${sshPassword} ssh ${sshUser}@${sshServer} mv /app/javari*.jar /app/bkp/ "
-         echo "Copy new Jar to Applications folder"
-         sh "sshpass -p ${sshPassword} ssh ${sshUser}@${sshServer} cp /build/javari-back-end/javari*.jar /app/ "
-         echo "Add permission to exec"
-         sh "sshpass -p ${sshPassword} ssh ${sshUser}@${sshServer} chmod +x /app/*.jar "
-         sh "sshpass -p ${sshPassword} ssh ${sshUser}@${sshServer} chown ubuntu /app/*.jar " 
-         echo "Start services" 
-         sh "sshpass -p ${sshPassword} ssh ${sshUser}@${sshServer} systemctl start javari-discovery "
-         sh "sshpass -p ${sshPassword} ssh ${sshUser}@${sshServer} systemctl start javari-gateway "
-         sh "sshpass -p ${sshPassword} ssh ${sshUser}@${sshServer} systemctl start javari-auth "
-         sh "sshpass -p ${sshPassword} ssh ${sshUser}@${sshServer} systemctl start javari-connector "
-         sh "sshpass -p ${sshPassword} ssh ${sshUser}@${sshServer} systemctl start javari-game "
-         echo "Clean build folder"
-         sh "sshpass -p ${sshPassword} ssh ${sshUser}@${sshServer} rm -rf /build/javari-back-end/*.jar "
+         sshagent(credentials : ['javari-aws-prd']){
+           echo "Send files to Server" 
+           sh "scp ./**/target/*App.jar ${sshUser}@${sshServer}:build/back/ "
+           echo "Stop current service "
+           sh "ssh ${sshUser}@${sshServer} systemctl stop javari-auth javari-game javari-connector javari-gateway javari-discovery "
+           echo "Rename current jar to old"
+           sh "ssh ${sshUser}@${sshServer} mv /opt/applications/javari*.jar /app/bkp/ "
+           echo "Copy new Jar to Applications folder"
+           sh "ssh ${sshUser}@${sshServer} cp /home/ubuntu/build/back/javari*.jar /opt/applications/ "
+           echo "Add permission to exec"
+           sh "ssh ${sshUser}@${sshServer} chmod +x /opt/applications/javari*.jar "
+           sh "ssh ${sshUser}@${sshServer} chown ubuntu /opt/applications/javari*.jar " 
+           echo "Start services" 
+           sh "ssh ${sshUser}@${sshServer} systemctl start javari-discovery "
+           sh "ssh ${sshUser}@${sshServer} systemctl start javari-gateway "
+           sh "ssh ${sshUser}@${sshServer} systemctl start javari-auth "
+           sh "ssh ${sshUser}@${sshServer} systemctl start javari-connector "
+           sh "ssh ${sshUser}@${sshServer} systemctl start javari-game "
+           echo "Clean build folder"
+           sh "ssh ${sshUser}@${sshServer} rm -rf /home/ubuntu/build/back/*.jar "
+         }
        }
      }
   }
