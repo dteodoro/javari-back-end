@@ -3,7 +3,7 @@ pipeline {
     maven 'maven'
   }
   environment {
-    sshServer = 'ec2-13-58-13-55.us-east-2.compute.amazonaws.com'
+    sshServer = $JAVARI_SERVER
     sshUser = 'ubuntu'
   }
   agent any
