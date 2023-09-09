@@ -3,8 +3,8 @@ pipeline {
     maven 'maven'
   }
   environment {
-    sshServer = $JAVARI_SERVER
-    sshUser = 'ubuntu'
+    sshServer = "${sshServer}"
+    sshUser = "${sshUser}"
   }
   agent any
   stages {
