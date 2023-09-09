@@ -9,13 +9,12 @@ import com.dteodoro.javari.core.repository.CompetitorRepository;
 import com.dteodoro.javari.core.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -26,7 +25,9 @@ public class ScheduleService {
     private final CompetitorRepository competitorRepo;
     private final TeamService teamService;
     private final SeasonService seasonService;
-    @Lazy private BetService betService;
+    @Autowired
+    @Lazy
+    private BetService betService;
     private final ModelMapper mapper;
 
     public List<ScheduleDTO> findByBettorId(UUID bettorId) {
