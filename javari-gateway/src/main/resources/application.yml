@@ -21,7 +21,7 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: "*"
+            allowedOrigins: "http://javari.ddns.net/"
             allowedHeaders: "*"
             allowedMethods:
               - GET
