@@ -22,7 +22,7 @@ pipeline {
     }
      stage('Deploy on EC2') {
        steps {
-         sshagent(credentials : ['javari-aws-prd']){
+         sshagent(credentials : ['ubuntu']){
            echo "Send files to Server" 
            sh "scp ./**/target/*App.jar ${sshUser}@${sshServer}:build/back/ "
            echo "Stop current service "
