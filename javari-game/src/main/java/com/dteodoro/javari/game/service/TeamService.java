@@ -9,6 +9,7 @@ import com.dteodoro.javari.commons.dto.TeamDTO;
 import com.dteodoro.javari.commons.enumeration.NFLConference;
 import com.dteodoro.javari.commons.enumeration.NFLDivision;
 import com.dteodoro.javari.core.repository.TeamRespository;
+import com.dteodoro.javari.core.repository.TeamScoreRepository;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class TeamService {
 
 	private final TeamRespository teamRepo;
 	private final ModelMapper modelMapper;
+	private final TeamScoreRepository teamScoreRepo;
 
 	public void saveTeam(Team team) {
 		Team currentTeam = teamRepo.findByEspnId(team.getEspnId());
@@ -77,16 +79,17 @@ public class TeamService {
 	}
 
 	private void updateScore(Team team,boolean sameConference, boolean winner, boolean tie) {
-		if(team.getScore() == null){
+		TeamScore score  = team.getScore();
+		if(score == null){
 			team.setScore(new TeamScore());
 		}
-		TeamScore score  = team.getScore();
 		score.setWins(winner ? score.getWins() + 1 : score.getWins());
 		score.setLosses(winner ? score.getLosses() : score.getLosses() + 1);
 		score.setTies(tie ? score.getTies() + 1 : score.getTies());
 		score.setWinsOnConference(sameConference ? score.getWinsOnConference() + 1 : score.getWinsOnConference());
 		score.updateScoreSummary();
 		score.updateWinPercentage();
+		teamScoreRepo.save(score);
 		teamRepo.save(team);
 	}
 
