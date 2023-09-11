@@ -81,7 +81,8 @@ public class TeamService {
 	private void updateScore(Team team,boolean sameConference, boolean winner, boolean tie) {
 		TeamScore score  = team.getScore();
 		if(score == null){
-			team.setScore(new TeamScore());
+			score = new TeamScore();
+			team.setScore(score);
 		}
 		score.setWins(winner ? score.getWins() + 1 : score.getWins());
 		score.setLosses(winner ? score.getLosses() : score.getLosses() + 1);
