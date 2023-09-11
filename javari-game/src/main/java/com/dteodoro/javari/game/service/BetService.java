@@ -31,7 +31,7 @@ public class BetService {
 
 	public ResponseEntity<BetDTO> makeBet(BetDTO betDto) {
 		Bet bet = modelMapper.map(betDto, Bet.class);
-		Optional<Bet> currentBet = betRepo.findByScheduleId(betDto.getScheduleId());
+		Optional<Bet> currentBet = betRepo.findByScheduleIdAndBettorId(betDto.getScheduleId(),betDto.getBettorId());
 		if (sheduleIsOpen(betDto.getScheduleId())) {
 			currentBet.ifPresent(value -> bet.setId(value.getId()));
 			betRepo.save(bet);

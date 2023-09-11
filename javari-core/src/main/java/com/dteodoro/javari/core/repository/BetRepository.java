@@ -11,6 +11,5 @@ public interface BetRepository extends JpaRepository<Bet, UUID>{
 
 	Optional<List<Bet>> findByBettorId(UUID bettorId);
 
-	Optional<Bet> findByScheduleId(UUID scheduleId);
-
+	Optional<Bet> findByScheduleIdAndBettorId(UUID scheduleId, UUID bettorId);
 }
