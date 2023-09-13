@@ -31,4 +31,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, UUID> {
 
 	@Query("select s from Schedule s order by s.status desc, s.startDate asc ")
 	List<Schedule> findAllOrderByStartDate();
+
+	@Query("select sh from Schedule sh join fetch SeasonCalendar sc on sh.seasonCalendar.id = sc.id " +
+			"join fetch Season s on sc.season.id = s.id join fetch Competition c on s.competition.id = c.id " +
+			"where c.year=:seasonYear")
+	List<Schedule> findAllSchedulesByCompetitionYear(Integer seasonYear);
 }

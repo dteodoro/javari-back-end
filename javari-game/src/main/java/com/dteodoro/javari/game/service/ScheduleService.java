@@ -53,6 +53,7 @@ public class ScheduleService {
                 .seasonCalendar(convetToSeasonCalendarDTO(schedule.getSeasonCalendar()))
                 .competitors(List.of(mapper.map(schedule.getHomeCompetitor(), CompetitorDTO.class),
                         mapper.map(schedule.getAwayCompetitor(), CompetitorDTO.class)))
+                .bet(schedule.getBets() != null ? mapper.map(schedule.getBets(),BetDTO.class) : null)
                 .build();
     }
 
@@ -96,16 +97,9 @@ public class ScheduleService {
     }
 
     public List<ScheduleBySeasonDTO> findByTeam(UUID teamId, Integer year) {
-        List<ScheduleBySeasonDTO> scheduleBySeason = new ArrayList<>();
-        List<ScheduleDTO> scheulesDto = scheduleRepo.findByHomeCompetitorTeamIdOrAwayCompetitorTeamIdAndSeasonCalendarSeasonCompetitionYear(teamId,teamId, year)
-                                                        .stream()
-                                                        .filter(s -> s.getStatus().equals(ScheduleStatus.STATUS_FINAL))
-                                                        .map(this::convertToScheduleDTO).toList();
-        return scheulesDto.stream()
-                .collect(Collectors.groupingBy(s -> s.getSeasonCalendar().getSeason().getLabel()))
-                .entrySet().stream()
-                .map(entry->new ScheduleBySeasonDTO(entry.getKey(),entry.getValue())).toList();
-
+        return convertToScheduleBySeasonDTO(
+                scheduleRepo.findByHomeCompetitorTeamIdOrAwayCompetitorTeamIdAndSeasonCalendarSeasonCompetitionYear(
+                        teamId,teamId, year));
     }
 
     public void saveOrUpdate(ScheduleDTO scheduleDto) {
@@ -166,4 +160,26 @@ public class ScheduleService {
         }
         return schedules.stream().map(s -> convertToScheduleDTO(s, bettorId)).toList();
     }
+
+    public List<ScheduleBySeasonDTO> findAllSchedulesBySeasonAndBettorId(final Integer seasonYear, final UUID bettorId) {
+        return convertToScheduleBySeasonDTO(scheduleRepo.findAllSchedulesByCompetitionYear(seasonYear),bettorId);
+    }
+
+    private List<ScheduleBySeasonDTO> convertToScheduleBySeasonDTO(List<Schedule> schedules){
+        return convertToScheduleBySeasonDTO(schedules,null);
+    }
+
+    private List<ScheduleBySeasonDTO> convertToScheduleBySeasonDTO(List<Schedule> schedules,UUID bettorId){
+        return schedules.stream()
+                .filter(s -> s.getStatus().equals(ScheduleStatus.STATUS_FINAL))
+                .map( s -> {
+                        return bettorId == null ? convertToScheduleDTO(s) : convertToScheduleDTO(s, bettorId);
+                      })
+                .toList()
+                .stream()
+                .collect(Collectors.groupingBy(s -> s.getSeasonCalendar().getSeason().getLabel()))
+                .entrySet().stream()
+                .map(entry->new ScheduleBySeasonDTO(entry.getKey(),entry.getValue())).toList();
+    }
+
 }
