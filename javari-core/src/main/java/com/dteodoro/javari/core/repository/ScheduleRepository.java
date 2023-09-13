@@ -29,6 +29,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, UUID> {
 			" order by s.startDate ")
 	List<Schedule> findBySeasonIdAndWeekId(UUID seasonId,UUID weekId);
 
-	@Query("select s from Schedule s order by s.startDate")
+	@Query("select s from Schedule s order by s.startDate, s.status asc ")
 	List<Schedule> findAllOrderByStartDate();
 }
