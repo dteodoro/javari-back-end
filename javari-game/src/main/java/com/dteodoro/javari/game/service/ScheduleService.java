@@ -25,6 +25,8 @@ public class ScheduleService {
     private final CompetitorRepository competitorRepo;
     private final TeamService teamService;
     private final SeasonService seasonService;
+    private final BettorService bettorService;
+
     @Autowired
     @Lazy
     private BetService betService;
@@ -90,6 +92,7 @@ public class ScheduleService {
         }
         scheduleRepo.save(currentSchedule);
         teamService.updateTeamScore(currentSchedule);
+        bettorService.updatePosition();
     }
 
     public List<ScheduleBySeasonDTO> findByTeam(UUID teamId, Integer year) {

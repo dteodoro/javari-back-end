@@ -2,6 +2,7 @@ package com.dteodoro.javari.core.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.UUID;
 
 import jakarta.persistence.*;
@@ -46,5 +47,14 @@ public class Score implements Serializable{
 		this.efficiencyPercentage = BigDecimal.ZERO;
 		this.amountBetMade = 0;
 		this.points = 0;
+	}
+
+	public BigDecimal calcEfficiencyPercentage(){
+		if(amountBetMade != 0 && numberOfHits != 0){
+			var hits = new BigDecimal(numberOfHits);
+			var total = new BigDecimal(amountBetMade);
+			return hits.divide(total).multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_DOWN);
+		}
+		return BigDecimal.ZERO;
 	}
 }

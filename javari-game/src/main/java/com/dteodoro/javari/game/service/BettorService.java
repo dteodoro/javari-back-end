@@ -36,7 +36,7 @@ public class BettorService {
 
 
 	public List<BettorDTO> findRivals(UUID bettorId) {
-		List<Bettor> bettors = bettorRepo.findAll();
+		List<Bettor> bettors = bettorRepo.findAllByOrderByCurrentPositionAsc();
 		return bettors.stream().map(b -> modelMapper.map(b, BettorDTO.class)).toList();
 	}
 
@@ -69,4 +69,28 @@ public class BettorService {
 		return false;
 	}
 
+	public void updatePosition() {
+		final List<Bettor> bettorsByScore = bettorRepo.findAllByOrderByScorePointsDesc();
+		if (!bettorsByScore.isEmpty()) {
+
+			for (int i = 0; i < bettorsByScore.size(); i++) {
+				var firstPosition = i == 0;
+				var currentBettor = bettorsByScore.get(i);
+
+				currentBettor.setPreviousPosition(currentBettor.getCurrentPosition());
+
+				if(firstPosition){
+					currentBettor.setCurrentPosition(i + 1);
+				} else {
+					var previousBettor = bettorsByScore.get(i-1);
+					if (currentBettor.getScore().getPoints().equals(previousBettor.getScore().getPoints())) {
+						currentBettor.setCurrentPosition(previousBettor.getCurrentPosition());
+					} else {
+						currentBettor.setCurrentPosition(previousBettor.getCurrentPosition() + 1);
+					}
+				}
+			}
+
+		}
+	}
 }

@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ScoreService {
 
-    private static final Integer BET_POINT = 3;
-    private static final Integer BET_TIE_POINT = 6;
     private final ScoreRepository scoreRepo;
 
     public void setPoint(Bet bet) {
@@ -20,6 +18,7 @@ public class ScoreService {
         if(currentScore != null ) {
             currentScore.setPoints(currentScore.getPoints() + bet.getBet().getScore());
             currentScore.setNumberOfHits(currentScore.getNumberOfHits() + 1);
+            currentScore.setEfficiencyPercentage(currentScore.calcEfficiencyPercentage());
             scoreRepo.save(currentScore);
         }
     }
@@ -34,5 +33,13 @@ public class ScoreService {
             return scoreRepo.save(new Score(bettor));
         }
         return currentScore;
+    }
+
+    public void addToAmountBet(final Bet bet) {
+        Score currentScore = scoreRepo.findByBettorId(bet.getBettorId()).orElse(null);
+        if(currentScore != null ) {
+            currentScore.setAmountBetMade(currentScore.getAmountBetMade()+1);
+            scoreRepo.save(currentScore);
+        }
     }
 }

@@ -35,6 +35,9 @@ public class BetService {
 		if (sheduleIsOpen(betDto.getScheduleId())) {
 			currentBet.ifPresent(value -> bet.setId(value.getId()));
 			betRepo.save(bet);
+			if(!currentBet.isPresent()){
+				scoreService.addToAmountBet(bet);
+			}
 			return ResponseEntity.created(URI.create("/bet/" + bet.getId())).body(modelMapper.map(bet, BetDTO.class));
 		}
 		throw new IllegalStateException("cannot make bet for schedules in process or closed");
