@@ -11,4 +11,5 @@ public class BettorDTO {
 	private Integer previousPosition;
 	private TeamDTO favoriteTeam;
 	private ScoreDTO score;
+	private String image;
 }

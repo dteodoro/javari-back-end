@@ -9,8 +9,14 @@ import com.dteodoro.javari.core.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MimeType;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -93,4 +99,14 @@ public class BettorService {
 
 		}
 	}
+
+    public void updateImage(final String imagePath, final UUID bettorId) {
+		if(StringUtils.hasText(imagePath)){
+			var bettor = bettorRepo.findById(bettorId).orElse(null);
+			if(bettor != null) {
+				bettor.setImage(imagePath);
+				bettorRepo.save(bettor);
+			}
+		}
+    }
 }

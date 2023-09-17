@@ -22,6 +22,7 @@ public class Bettor extends BaseUser implements AppUser {
 	private Integer previousPosition;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Team favoriteTeam;
+	private String image;
 
 	@OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
 	private Score score;
@@ -42,4 +43,5 @@ public class Bettor extends BaseUser implements AppUser {
 	public BaseUser create(BaseUser user) {
 		return new Bettor(user);
 	}
+
 }

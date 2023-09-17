@@ -45,3 +45,6 @@ feign:
     config:
       default:
         loggerLevel: full
+
+files:
+  uploadDir: /mnt/storage/javari_files/
