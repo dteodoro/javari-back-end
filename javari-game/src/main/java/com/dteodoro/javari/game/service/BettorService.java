@@ -95,8 +95,8 @@ public class BettorService {
 						currentBettor.setCurrentPosition(previousBettor.getCurrentPosition() + 1);
 					}
 				}
+				bettorRepo.save(currentBettor);
 			}
-
 		}
 	}
 
