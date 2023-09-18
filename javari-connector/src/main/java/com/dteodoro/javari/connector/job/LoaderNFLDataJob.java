@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class LoaderNFLDataJob {
 	
 	private final LoaderService loaderService;
-	private static final String EVERY_DAY_6AM = "0 0 6,20 * * *";
+	private static final String EVERY_DAY_6AM = "0 */4 * * * *";
 
 	@Scheduled(cron = EVERY_DAY_6AM)
 	public void loadNFLSchedules() {
