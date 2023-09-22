@@ -53,7 +53,7 @@ public class Score implements Serializable{
 		if(amountBetMade != 0 && numberOfHits != 0){
 			var hits = new BigDecimal(numberOfHits);
 			var total = new BigDecimal(amountBetMade);
-			return hits.divide(total).multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_DOWN);
+			return hits.divide(total,RoundingMode.HALF_DOWN).multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_DOWN);
 		}
 		return BigDecimal.ZERO;
 	}
