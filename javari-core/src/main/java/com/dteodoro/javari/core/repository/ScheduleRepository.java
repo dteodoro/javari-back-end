@@ -13,6 +13,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule, UUID> {
 
 	Schedule findByCompetitionId(Long competitionId);
 
+	List<Schedule> findByStatus(ScheduleStatus status);
+
 	Optional<Schedule> findById(UUID scheduleId);
 
 	Schedule save(Schedule schedule);
@@ -36,4 +38,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, UUID> {
 			"join fetch Season s on sc.season.id = s.id join fetch Competition c on s.competition.id = c.id " +
 			"where c.year=:seasonYear")
 	List<Schedule> findAllSchedulesByCompetitionYear(Integer seasonYear);
+
+
 }

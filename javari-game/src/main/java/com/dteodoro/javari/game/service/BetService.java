@@ -1,15 +1,14 @@
 package com.dteodoro.javari.game.service;
 
-import com.dteodoro.javari.core.domain.Bet;
-import com.dteodoro.javari.core.domain.Schedule;
-import com.dteodoro.javari.core.repository.BetRepository;
 import com.dteodoro.javari.commons.dto.BetDTO;
 import com.dteodoro.javari.commons.enumeration.BetEnum;
 import com.dteodoro.javari.commons.enumeration.ScheduleStatus;
+import com.dteodoro.javari.core.domain.Bet;
+import com.dteodoro.javari.core.domain.Schedule;
+import com.dteodoro.javari.core.repository.BetRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +33,11 @@ public class BetService {
 		Optional<Bet> currentBet = betRepo.findByScheduleIdAndBettorId(betDto.getScheduleId(),betDto.getBettorId());
 		if (sheduleIsOpen(betDto.getScheduleId())) {
 			currentBet.ifPresent(value -> bet.setId(value.getId()));
-			betRepo.save(bet);
+			if(bet.getBet()==null){
+				betRepo.delete(bet);
+			}else {
+				betRepo.save(bet);
+			}
 			if(!currentBet.isPresent()){
 				scoreService.addToAmountBet(bet);
 			}

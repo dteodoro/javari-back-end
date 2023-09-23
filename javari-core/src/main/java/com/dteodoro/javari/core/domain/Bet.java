@@ -6,11 +6,13 @@ import com.dteodoro.javari.commons.enumeration.BetEnum;
 import jakarta.persistence.*;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 public class Bet {
 	
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,5 +25,16 @@ public class Bet {
 	private BetEnum bet;
 	private Integer score;
 	private Boolean win;
-	
+
+	public Bet(final UUID bettorId) {
+		this.bettorId = bettorId;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if(obj==null){
+			return false;
+		}
+		return this.bettorId.equals(((Bet)obj).getBettorId());
+	}
 }

@@ -182,4 +182,14 @@ public class ScheduleService {
                 .map(entry->new ScheduleBySeasonDTO(entry.getKey(),entry.getValue())).toList();
     }
 
+    public long findOpenSchedulesWithoutBets(final UUID bettorId) {
+        final List<Schedule> openSchedules = scheduleRepo.findByStatus(ScheduleStatus.STATUS_SCHEDULED);
+        return openSchedules.stream().filter(s->{
+            if(s.getBets().isEmpty()) {
+                return true;
+            }else{
+                return !s.getBets().contains(new Bet(bettorId));
+            }
+         }).count();
+    }
 }

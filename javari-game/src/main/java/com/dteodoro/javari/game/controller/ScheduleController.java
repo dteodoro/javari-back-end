@@ -47,4 +47,9 @@ public class ScheduleController {
 		scheduleService.saveOrUpdate(scheduleDTO);
 		return ResponseEntity.ok().build();
 	}
+
+	@GetMapping("/bettor/{bettorId}")
+	public long findOpenSchedulesWithoutBets(@PathVariable(name="bettorId",required = true) UUID bettorId){
+		return scheduleService.findOpenSchedulesWithoutBets(bettorId);
+	}
 }
