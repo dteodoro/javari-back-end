@@ -40,4 +40,5 @@ public interface ScheduleRepository extends JpaRepository<Schedule, UUID> {
 	List<Schedule> findAllSchedulesByCompetitionYear(Integer seasonYear);
 
 
+    long countByStatus(ScheduleStatus scheduleStatus);
 }

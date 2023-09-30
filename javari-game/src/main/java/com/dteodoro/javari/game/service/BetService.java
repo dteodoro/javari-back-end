@@ -31,15 +31,12 @@ public class BetService {
 	public ResponseEntity<BetDTO> makeBet(BetDTO betDto) {
 		Bet bet = modelMapper.map(betDto, Bet.class);
 		Optional<Bet> currentBet = betRepo.findByScheduleIdAndBettorId(betDto.getScheduleId(),betDto.getBettorId());
-		if (sheduleIsOpen(betDto.getScheduleId())) {
+		if (scheduleIsOpen(betDto.getScheduleId())) {
 			currentBet.ifPresent(value -> bet.setId(value.getId()));
 			if(bet.getBet()==null){
 				betRepo.delete(bet);
 			}else {
 				betRepo.save(bet);
-			}
-			if(!currentBet.isPresent()){
-				scoreService.addToAmountBet(bet);
 			}
 			return ResponseEntity.created(URI.create("/bet/" + bet.getId())).body(modelMapper.map(bet, BetDTO.class));
 		}
@@ -54,19 +51,20 @@ public class BetService {
 
 	public void setWin(Schedule schedule){
 		if(schedule.getStatus().equals(ScheduleStatus.STATUS_FINAL)){
+			Integer schedulesClosed = scheduleService.countCloseSchedules();
 			BetEnum winner = getWinner(schedule);
 			schedule.getBets().forEach(bet -> {
 				bet.setWin(bet.getBet().equals(winner));
-				update(bet);
+				update(bet,schedulesClosed);
 			});
 		}else{
 			log.error("Schedule hasn't finished yet ");
 		}
 	}
 
-	private void update(Bet bet) {
+	private void update(Bet bet,Integer numberOfSchedulesClose) {
 		if(bet.getWin()){
-			scoreService.setPoint(bet);
+			scoreService.setPoint(bet,numberOfSchedulesClose);
 		}
 		betRepo.save(bet);
 	}
@@ -85,7 +83,7 @@ public class BetService {
 		return modelMapper.map(bet, BetDTO.class);
 	}
 	
-	private boolean sheduleIsOpen(UUID scheduleId) {
+	private boolean scheduleIsOpen(UUID scheduleId) {
 		return scheduleService.scheduleIsOpen(scheduleId);
 	}
 }

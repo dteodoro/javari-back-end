@@ -192,4 +192,8 @@ public class ScheduleService {
             }
          }).count();
     }
+
+    public Integer countCloseSchedules() {
+        return (int) scheduleRepo.countByStatus(ScheduleStatus.STATUS_FINAL);
+    }
 }
