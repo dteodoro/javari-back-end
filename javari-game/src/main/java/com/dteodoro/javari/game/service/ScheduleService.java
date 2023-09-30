@@ -93,7 +93,18 @@ public class ScheduleService {
         }
         scheduleRepo.save(currentSchedule);
         teamService.updateTeamScore(currentSchedule);
-        bettorService.updatePosition();
+
+        boolean haveOpenSchedulesOnTheSameDay = checkSchedulesOpenOnTheSameDay(currentSchedule.getStartDate());
+        if(!haveOpenSchedulesOnTheSameDay) {
+            bettorService.updatePosition();
+        }
+    }
+
+    private boolean checkSchedulesOpenOnTheSameDay(final LocalDateTime startDate) {
+       return scheduleRepo.countByStartDateAndStatusNotIn(
+                 startDate.toLocalDate()
+                ,startDate.plusDays(1).toLocalDate()
+                ,ScheduleStatus.STATUS_FINAL) > 0;
     }
 
     public List<ScheduleBySeasonDTO> findByTeam(UUID teamId, Integer year) {

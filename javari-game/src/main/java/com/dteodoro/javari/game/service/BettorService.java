@@ -25,11 +25,7 @@ public class BettorService {
 
 	private final ModelMapper modelMapper;
 	private final BettorRepository bettorRepo;
-	private final UserRepository userRepository;
-
     private final TeamService teamService;
-
-	private final ScoreService scoreService;
 
 	public BettorDTO findBettorDetails(UUID bettorId) {
 		return modelMapper.map(bettorRepo.findById(bettorId).orElse(null), BettorDTO.class);
@@ -86,7 +82,7 @@ public class BettorService {
 				currentBettor.setPreviousPosition(currentBettor.getCurrentPosition());
 
 				if(firstPosition){
-					currentBettor.setCurrentPosition(i + 1);
+					currentBettor.setCurrentPosition(1);
 				} else {
 					var previousBettor = bettorsByScore.get(i-1);
 					if (currentBettor.getScore().getPoints().equals(previousBettor.getScore().getPoints())) {

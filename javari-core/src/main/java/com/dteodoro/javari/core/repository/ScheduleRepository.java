@@ -1,5 +1,6 @@
 package com.dteodoro.javari.core.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,4 +42,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule, UUID> {
 
 
     long countByStatus(ScheduleStatus scheduleStatus);
+
+	@Query("select count(sh) from Schedule sh where sh.startDate between :dayStart and :dayEnd " +
+			"and sh.status not in (:status) ")
+	long countByStartDateAndStatusNotIn(LocalDate dayStart, LocalDate dayEnd,ScheduleStatus status);
 }
