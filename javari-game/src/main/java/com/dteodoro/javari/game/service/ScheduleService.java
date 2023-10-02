@@ -102,8 +102,8 @@ public class ScheduleService {
 
     private boolean checkSchedulesOpenOnTheSameDay(final LocalDateTime startDate) {
        return scheduleRepo.countByStartDateAndStatusNotIn(
-                 startDate.toLocalDate()
-                ,startDate.plusDays(1).toLocalDate()
+                 startDate.withHour(0)
+                ,startDate.withHour(0).plusDays(1)
                 ,ScheduleStatus.STATUS_FINAL) > 0;
     }
 
