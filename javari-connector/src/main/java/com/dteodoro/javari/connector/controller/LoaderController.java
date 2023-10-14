@@ -33,6 +33,7 @@ public class LoaderController {
 		log.info("Loading Schedule by ESPN API...");
 		try {
 			loaderService.loadSchedules();
+			loaderService.loadStandings();
 		} catch (Exception e) {
 			log.error("Cannot Load NFL Schedules",e);
 		}
@@ -49,5 +50,4 @@ public class LoaderController {
 		}
 		log.info("NFL Seasons loading finished");
 	}
-	
 }

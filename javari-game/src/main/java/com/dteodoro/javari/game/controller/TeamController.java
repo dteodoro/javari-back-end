@@ -1,6 +1,6 @@
 package com.dteodoro.javari.game.controller;
 
-import com.dteodoro.javari.core.domain.Team;
+import com.dteodoro.javari.commons.dto.TeamScoreDTO;
 import com.dteodoro.javari.commons.dto.ConferenceTeamsDTO;
 import com.dteodoro.javari.commons.dto.TeamDTO;
 import com.dteodoro.javari.commons.enumeration.NFLConference;
@@ -23,7 +23,7 @@ public class TeamController {
 
 	@GetMapping
 	public List<ConferenceTeamsDTO> findAll(@RequestParam(name = "conference") String conference,
-											@RequestParam(name="division") String division) {
+											@RequestParam(name = "division") String division) {
 
 		return teamService.findByTypes(StringUtils.hasText(conference) ? NFLConference.valueOf(conference) : null ,
 				StringUtils.hasText(division) ? NFLDivision.valueOf(division):null);
@@ -36,9 +36,13 @@ public class TeamController {
 
 	@PostMapping
 	public ResponseEntity saveTeam(@RequestBody TeamDTO teamDTO){
-		//TODO implements save team
 		teamService.saveTeam(teamDTO);
 		return ResponseEntity.ok().build();
 	}
 
+	@PostMapping("/score")
+	public ResponseEntity saveTeam(@RequestBody TeamScoreDTO teamScoreDTO){
+		teamService.saveTeamScore(teamScoreDTO);
+		return ResponseEntity.ok().build();
+	}
 }

@@ -3,6 +3,7 @@ package com.dteodoro.javari.connector.http;
 import com.dteodoro.javari.commons.dto.ScheduleDTO;
 import com.dteodoro.javari.commons.dto.SeasonDTO;
 import com.dteodoro.javari.commons.dto.TeamDTO;
+import com.dteodoro.javari.commons.dto.TeamScoreDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -22,4 +23,6 @@ public interface GameClient {
 	@PostMapping(value = "/api/v1/game/seasons", consumes = MediaType.APPLICATION_JSON_VALUE)
 	void saveSeason(@RequestHeader(value = "Authorization", required = true) String authorizationHeader, @RequestBody SeasonDTO seasonDTO);
 
+	@PostMapping(value = "/api/v1/game/teams/score", consumes = MediaType.APPLICATION_JSON_VALUE)
+    void saveTeamScore(@RequestHeader(value = "Authorization", required = true) String accessToken, @RequestBody TeamScoreDTO teamScoreDTO);
 }

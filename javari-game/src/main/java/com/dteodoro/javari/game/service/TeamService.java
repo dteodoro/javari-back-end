@@ -1,11 +1,7 @@
 package com.dteodoro.javari.game.service;
 
-import com.dteodoro.javari.commons.enumeration.ScheduleStatus;
+import com.dteodoro.javari.commons.dto.*;
 import com.dteodoro.javari.core.domain.*;
-import com.dteodoro.javari.commons.dto.ConferenceTeamsDTO;
-import com.dteodoro.javari.commons.dto.DivisionTeamDTO;
-import com.dteodoro.javari.commons.dto.StandingDTO;
-import com.dteodoro.javari.commons.dto.TeamDTO;
 import com.dteodoro.javari.commons.enumeration.NFLConference;
 import com.dteodoro.javari.commons.enumeration.NFLDivision;
 import com.dteodoro.javari.core.repository.TeamRespository;
@@ -66,34 +62,6 @@ public class TeamService {
 		}
 		return standings;
 	}
-	
-	public void updateTeamScore(Schedule currentSchedule) {
-		if(currentSchedule.getStatus().equals(ScheduleStatus.STATUS_FINAL)){
-			Competitor homeCompetitor = currentSchedule.getHomeCompetitor();
-			Competitor awayCompetitor = currentSchedule.getAwayCompetitor();
-			boolean tie = homeCompetitor.getWinner().equals(awayCompetitor.getWinner());
-			boolean sameConference = homeCompetitor.getTeam().getConference().equals(awayCompetitor.getTeam().getConference());
-			updateScore(homeCompetitor.getTeam(),sameConference,homeCompetitor.getWinner(), tie);
-			updateScore(awayCompetitor.getTeam(),sameConference,awayCompetitor.getWinner(), tie);
-		}
-	}
-
-	private void updateScore(Team team,boolean sameConference, boolean winner, boolean tie) {
-		TeamScore score  = team.getScore();
-		if(score == null){
-			score = new TeamScore();
-			team.setScore(score);
-		}
-		score.setWins(winner ? score.getWins() + 1 : score.getWins());
-		score.setLosses(winner ? score.getLosses() : score.getLosses() + 1);
-		score.setTies(tie ? score.getTies() + 1 : score.getTies());
-		score.setWinsOnConference(sameConference ? score.getWinsOnConference() + 1 : score.getWinsOnConference());
-		score.updateScoreSummary();
-		score.updateWinPercentage();
-		teamScoreRepo.save(score);
-		teamRepo.save(team);
-	}
-
 
 	private Specification<Team> getTeamSpec(TeamForm teamForm) {
 		return (root, query, builder) -> {
@@ -157,5 +125,39 @@ public class TeamService {
 		if(teamDTO != null){
 			saveTeam(modelMapper.map(teamDTO, Team.class));
 		}
+	}
+
+    public void saveTeamScore(final TeamScoreDTO teamScoreDTO) {
+		Team team = teamRepo.findByEspnId(teamScoreDTO.getTeamId());
+		TeamScore score;
+		if(team.getScore() != null){
+			score = team.getScore();
+		}else{
+			score = new TeamScore();
+		}
+		score.setWins(teamScoreDTO.getWins());
+		score.setLosses(teamScoreDTO.getLosses());
+		score.setTies(teamScoreDTO.getTies());
+		score.setWinPercentage(calcWinPercent(teamScoreDTO.getWinPercent()));
+		score.setHome(teamScoreDTO.getHome());
+		score.setRoad(teamScoreDTO.getRoad());
+		score.setVersusDiv(teamScoreDTO.getVersusDiv());
+		score.setVersusConf(teamScoreDTO.getVersusConf());
+		score.setPointsFor(teamScoreDTO.getPointsFor());
+		score.setPointsAgainst(teamScoreDTO.getPointsAgainst());
+		score.setPointDifferential(teamScoreDTO.getPointDifferential());
+		score.setStreak(teamScoreDTO.getStreak());
+		score.setSeasonName(teamScoreDTO.getSeasonName());
+		score.setSeasonYear(teamScoreDTO.getSeasonYear());
+		score.updateScoreSummary();
+		teamScoreRepo.save(score);
+		team.setScore(score);
+		teamRepo.save(team);
+    }
+
+	private double calcWinPercent(String winPercent) {
+		if(winPercent == null) return 0;
+		Double percent = Double.valueOf(winPercent.startsWith(".") ? "0"+winPercent : winPercent);
+		return percent * 100;
 	}
 }

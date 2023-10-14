@@ -92,7 +92,6 @@ public class ScheduleService {
             betService.setWin(currentSchedule);
         }
         scheduleRepo.save(currentSchedule);
-        teamService.updateTeamScore(currentSchedule);
 
         boolean haveOpenSchedulesOnTheSameDay = checkSchedulesOpenOnTheSameDay(currentSchedule.getStartDate());
         if(!haveOpenSchedulesOnTheSameDay) {

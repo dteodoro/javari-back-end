@@ -1,26 +1,33 @@
 package com.dteodoro.javari.connector.service;
 
-import com.dteodoro.javari.commons.dto.SeasonDTO;
-import com.dteodoro.javari.connector.domain.ScheduleLoader;
-import com.dteodoro.javari.connector.domain.SeasonLoader;
-import com.dteodoro.javari.connector.domain.TeamLoader;
-import com.dteodoro.javari.connector.dto.*;
-import com.dteodoro.javari.connector.http.GameClient;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Collection;
+import java.util.List;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.dteodoro.javari.commons.dto.SeasonDTO;
+import com.dteodoro.javari.commons.dto.TeamScoreDTO;
+import com.dteodoro.javari.connector.domain.ScheduleLoader;
+import com.dteodoro.javari.connector.domain.SeasonLoader;
+import com.dteodoro.javari.connector.domain.StandingLoader;
+import com.dteodoro.javari.connector.domain.TeamLoader;
+import com.dteodoro.javari.connector.dto.ScheduleImportDTO;
+import com.dteodoro.javari.connector.dto.SeasonImportDTO;
+import com.dteodoro.javari.connector.dto.StandingsTeamStatsImportDTO;
+import com.dteodoro.javari.connector.dto.TeamImportDTO;
+import com.dteodoro.javari.connector.http.GameClient;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class LoaderServiceImp implements LoaderService{
 
     private final TeamLoader teamLoader;
     private final ScheduleLoader scheduleLoader;
     private final SeasonLoader seasonLoader;
+    private final StandingLoader standingLoader;
     private final GameClient gameClient;
 
     @Override
@@ -44,7 +51,7 @@ public class LoaderServiceImp implements LoaderService{
 
     @Override
     public void loadSeasons() {
-        List<SeasonImportDTO> importSeasons = (List<SeasonImportDTO>) seasonLoader.load();
+        Collection<SeasonImportDTO> importSeasons = (Collection<SeasonImportDTO>) seasonLoader.load();
         String accessToken = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
         for (SeasonDTO seasonDTO : importSeasons.stream().map(SeasonImportDTO::toDomainDto).toList()) {
             gameClient.saveSeason(accessToken,seasonDTO);
@@ -52,5 +59,13 @@ public class LoaderServiceImp implements LoaderService{
         //TODO implements fallback methods
     }
 
-
+    @Override
+    public void loadStandings() {
+        List<StandingsTeamStatsImportDTO> importStandings =(List<StandingsTeamStatsImportDTO>) standingLoader.load();
+        String accessToken = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        for(TeamScoreDTO teamScoreDTO : importStandings.stream().map(StandingsTeamStatsImportDTO::toDomainDto).toList()){
+            gameClient.saveTeamScore(accessToken,teamScoreDTO);
+        }
+        //TODO implements fallback methods
+    }
 }
