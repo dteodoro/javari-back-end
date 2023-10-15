@@ -1,10 +1,12 @@
 package com.dteodoro.javari.commons.dto;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
 @Data
 @ToString
+@Builder
 public class TeamScoreDTO implements DomainDTO {
 
     private Long teamId;

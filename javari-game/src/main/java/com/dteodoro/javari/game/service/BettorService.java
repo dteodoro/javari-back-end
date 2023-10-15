@@ -5,18 +5,11 @@ import com.dteodoro.javari.commons.dto.TeamDTO;
 import com.dteodoro.javari.core.domain.Bettor;
 import com.dteodoro.javari.core.domain.Team;
 import com.dteodoro.javari.core.repository.BettorRepository;
-import com.dteodoro.javari.core.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MimeType;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,17 +18,16 @@ public class BettorService {
 
 	private final ModelMapper modelMapper;
 	private final BettorRepository bettorRepo;
-    private final TeamService teamService;
+	private final TeamService teamService;
 
 	public BettorDTO findBettorDetails(UUID bettorId) {
 		return modelMapper.map(bettorRepo.findById(bettorId).orElse(null), BettorDTO.class);
 
 	}
 
-    public Bettor findById(UUID bettorId) {
+	public Bettor findById(UUID bettorId) {
 		return bettorRepo.findById(bettorId).orElse(null);
-    }
-
+	}
 
 	public List<BettorDTO> findRivals(UUID bettorId) {
 		List<Bettor> bettors = bettorRepo.findAllByOrderByCurrentPositionAsc();
@@ -45,7 +37,6 @@ public class BettorService {
 	public void save(Bettor bettor) {
 		bettorRepo.save(bettor);
 	}
-
 
 	public TeamDTO setFavoriteTeam(UUID bettorId, UUID teamId) {
 		Bettor bettor = bettorRepo.findById(bettorId).orElse(null);
@@ -57,16 +48,16 @@ public class BettorService {
 
 	public TeamDTO findFavoriteTeam(UUID bettorId) {
 		Bettor bettor = bettorRepo.findById(bettorId).orElse(null);
-		if(bettor != null ){
+		if (bettor != null) {
 			return modelMapper.map(bettor.getFavoriteTeam(), TeamDTO.class);
 		}
 		return null;
 	}
 
-	public boolean hasPermission(UUID bettorId, String roleName){
+	public boolean hasPermission(UUID bettorId, String roleName) {
 		Bettor bettor = findById(bettorId);
-		if(bettor != null){
-			return ("ROLE_"+bettor.getRole().toString()).equals(roleName);
+		if (bettor != null) {
+			return ("ROLE_" + bettor.getRole().toString()).equals(roleName);
 		}
 		return false;
 	}
@@ -81,10 +72,10 @@ public class BettorService {
 
 				currentBettor.setPreviousPosition(currentBettor.getCurrentPosition());
 
-				if(firstPosition){
+				if (firstPosition) {
 					currentBettor.setCurrentPosition(1);
 				} else {
-					var previousBettor = bettorsByScore.get(i-1);
+					var previousBettor = bettorsByScore.get(i - 1);
 					if (currentBettor.getScore().getPoints().equals(previousBettor.getScore().getPoints())) {
 						currentBettor.setCurrentPosition(previousBettor.getCurrentPosition());
 					} else {
@@ -96,13 +87,13 @@ public class BettorService {
 		}
 	}
 
-    public void updateImage(final String imagePath, final UUID bettorId) {
-		if(StringUtils.hasText(imagePath)){
+	public void updateImage(final String imagePath, final UUID bettorId) {
+		if (StringUtils.hasText(imagePath)) {
 			var bettor = bettorRepo.findById(bettorId).orElse(null);
-			if(bettor != null) {
+			if (bettor != null) {
 				bettor.setImage(imagePath);
 				bettorRepo.save(bettor);
 			}
 		}
-    }
+	}
 }

@@ -22,25 +22,24 @@ public class SecurityConfiguration {
 	private final JwtAuthenticationFilter jwtAuthFilter;
 	private final AuthenticationProvider authenticationProvider;
 	private final LogoutHandler logoutHandler;
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http
-				.cors().and().csrf().disable() //disable CORS and CSRF 'cause it will be validated by Token
-				.authorizeHttpRequests() //Configure HttpRequest
-					.requestMatchers("/api/v1/auth/**").permitAll()
-					.anyRequest().authenticated() //any other request must be authenticated
-				.and()
-				.sessionManagement()
-					.sessionCreationPolicy(SessionCreationPolicy.STATELESS) //disable Session 'cause it will be an STATELESS API
-				.and()
-				.authenticationProvider(authenticationProvider)
-					.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // add jwtAuthFilter to verify token before spring default filter
-					.logout()
-					.logoutUrl("/api/v1/auth/logout")
-						.addLogoutHandler(logoutHandler)
-						.logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext()))
-				.and()
-				.build(); // build the SercurityFilterChain
+                .cors(cors -> cors.disable()).csrf(csrf -> csrf.disable()) //disable CORS and CSRF 'cause it will be validated by Token
+                .authorizeHttpRequests() //Configure HttpRequest
+                .requestMatchers("/api/v1/auth/**").permitAll()
+                .anyRequest().authenticated() //any other request must be authenticated
+                .and()
+                .sessionManagement(management -> management
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // add jwtAuthFilter to verify token before spring default filter
+                .logout(logout -> logout
+                        .logoutUrl("/api/v1/auth/logout")
+                        .addLogoutHandler(logoutHandler)
+                        .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext())))
+                .build(); // build the SercurityFilterChain
 	}
 
 }

@@ -1,6 +1,5 @@
 package com.dteodoro.javari.game.controller;
 
-
 import com.dteodoro.javari.core.domain.Bettor;
 import com.dteodoro.javari.core.domain.Score;
 import com.dteodoro.javari.game.service.BettorService;
@@ -22,15 +21,16 @@ public class ScoreController {
 
     private final BettorService bettorService;
     private final ScoreService scoreService;
+
     @PostMapping("/{id}")
-    public ResponseEntity<?> createScore(@PathVariable(name = "id",required = true) UUID bettorId){
+    public ResponseEntity<?> createScore(@PathVariable(name = "id", required = true) UUID bettorId) {
         Bettor bettor = bettorService.findById(bettorId);
-        if(bettor != null ){
+        if (bettor != null) {
             Score score = scoreService.save(new Score(bettor));
             bettor.setScore(score);
             bettorService.save(bettor);
-            return ResponseEntity.created(URI.create("/score/"+bettorId)).build();
-        }else{
+            return ResponseEntity.created(URI.create("/score/" + bettorId)).build();
+        } else {
             return ResponseEntity.notFound().build();
         }
     }

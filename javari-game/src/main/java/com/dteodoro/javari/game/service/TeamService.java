@@ -30,7 +30,7 @@ public class TeamService {
 
 	public void saveTeam(Team team) {
 		Team currentTeam = teamRepo.findByEspnId(team.getEspnId());
-		if(currentTeam != null) {
+		if (currentTeam != null) {
 			team.setId(currentTeam.getId());
 		}
 		teamRepo.save(team);
@@ -48,17 +48,19 @@ public class TeamService {
 		return convertToTeamDTO(teamRepo.findById(teamId).orElse(null));
 	}
 
-	public Team findTeamById(UUID teamId){
+	public Team findTeamById(UUID teamId) {
 		return teamRepo.findById(teamId).orElse(null);
 	}
 
 	public List<StandingDTO> findStandingByConference(NFLConference conference) {
 		List<StandingDTO> standings = new ArrayList<>();
-		Map<NFLDivision, List<Team>> teamsByDisivion = teamRepo.findByConference(conference).orElse(Collections.emptyList()).stream()
-													   .collect(Collectors.groupingBy(Team::getDivision));
-		
+		Map<NFLDivision, List<Team>> teamsByDisivion = teamRepo.findByConference(conference)
+				.orElse(Collections.emptyList()).stream()
+				.collect(Collectors.groupingBy(Team::getDivision));
+
 		for (Entry<NFLDivision, List<Team>> teamByDivision : teamsByDisivion.entrySet()) {
-			standings.add(new StandingDTO(teamByDivision.getKey(), teamByDivision.getValue().stream().map(this::convertToTeamDTO).toList()));
+			standings.add(new StandingDTO(teamByDivision.getKey(),
+					teamByDivision.getValue().stream().map(this::convertToTeamDTO).toList()));
 		}
 		return standings;
 	}
@@ -79,39 +81,40 @@ public class TeamService {
 			return builder.and(predicates.toArray(new Predicate[0]));
 		};
 	}
-	
+
 	private TeamDTO convertToTeamDTO(Team team) {
 		TeamDTO teamDTO = modelMapper.map(team, TeamDTO.class);
-		if(!StringUtils.hasText(teamDTO.getScoreScoreSummary())){
+		if (!StringUtils.hasText(teamDTO.getScoreScoreSummary())) {
 			teamDTO.setScoreScoreSummary("0-0-0");
 		}
 		return teamDTO;
 	}
 
-	public List<ConferenceTeamsDTO> findByTypes(NFLConference conferenceType, NFLDivision divisionType)  {
-		List<ConferenceTeamsDTO> conferences = createConferencesList(conferenceType,divisionType);
+	public List<ConferenceTeamsDTO> findByTypes(NFLConference conferenceType, NFLDivision divisionType) {
+		List<ConferenceTeamsDTO> conferences = createConferencesList(conferenceType, divisionType);
 		for (ConferenceTeamsDTO conf : conferences) {
-			for(DivisionTeamDTO div : conf.getDivisions()){
+			for (DivisionTeamDTO div : conf.getDivisions()) {
 				div.setTeams(
 						teamRepo.findByConferenceAndDivision(
-									conferenceType == null ? conf.getName() : conferenceType,
-									divisionType == null ? div.getName(): divisionType)
-										.stream().map(this::convertToTeamDTO).toList());
+								conferenceType == null ? conf.getName() : conferenceType,
+								divisionType == null ? div.getName() : divisionType)
+								.stream().map(this::convertToTeamDTO).toList());
 			}
 		}
 		return conferences;
 	}
 
-	private List<ConferenceTeamsDTO> createConferencesList(NFLConference conferenceType, NFLDivision divisionType){
-		if(conferenceType != null){
-			return List.of(new ConferenceTeamsDTO(conferenceType,createDivisionList(divisionType)));
+	private List<ConferenceTeamsDTO> createConferencesList(NFLConference conferenceType, NFLDivision divisionType) {
+		if (conferenceType != null) {
+			return List.of(new ConferenceTeamsDTO(conferenceType, createDivisionList(divisionType)));
 		}
 		return List.of(
-				new ConferenceTeamsDTO(NFLConference.NFC,createDivisionList(divisionType)),
-				new ConferenceTeamsDTO(NFLConference.AFC,createDivisionList(divisionType)));
+				new ConferenceTeamsDTO(NFLConference.NFC, createDivisionList(divisionType)),
+				new ConferenceTeamsDTO(NFLConference.AFC, createDivisionList(divisionType)));
 	}
-	private List<DivisionTeamDTO> createDivisionList(NFLDivision divisionType){
-		if(divisionType != null){
+
+	private List<DivisionTeamDTO> createDivisionList(NFLDivision divisionType) {
+		if (divisionType != null) {
 			return List.of(new DivisionTeamDTO(divisionType));
 		}
 		return List.of(
@@ -122,17 +125,17 @@ public class TeamService {
 	}
 
 	public void saveTeam(TeamDTO teamDTO) {
-		if(teamDTO != null){
+		if (teamDTO != null) {
 			saveTeam(modelMapper.map(teamDTO, Team.class));
 		}
 	}
 
-    public void saveTeamScore(final TeamScoreDTO teamScoreDTO) {
+	public void saveTeamScore(final TeamScoreDTO teamScoreDTO) {
 		Team team = teamRepo.findByEspnId(teamScoreDTO.getTeamId());
 		TeamScore score;
-		if(team.getScore() != null){
+		if (team.getScore() != null) {
 			score = team.getScore();
-		}else{
+		} else {
 			score = new TeamScore();
 		}
 		score.setWins(teamScoreDTO.getWins());
@@ -153,11 +156,12 @@ public class TeamService {
 		teamScoreRepo.save(score);
 		team.setScore(score);
 		teamRepo.save(team);
-    }
+	}
 
 	private double calcWinPercent(String winPercent) {
-		if(winPercent == null) return 0;
-		Double percent = Double.valueOf(winPercent.startsWith(".") ? "0"+winPercent : winPercent);
+		if (winPercent == null)
+			return 0;
+		Double percent = Double.valueOf(winPercent.startsWith(".") ? "0" + winPercent : winPercent);
 		return percent * 100;
 	}
 }

@@ -23,26 +23,27 @@ public class TeamController {
 
 	@GetMapping
 	public List<ConferenceTeamsDTO> findAll(@RequestParam(name = "conference") String conference,
-											@RequestParam(name = "division") String division) {
+			@RequestParam(name = "division") String division) {
 
-		return teamService.findByTypes(StringUtils.hasText(conference) ? NFLConference.valueOf(conference) : null ,
-				StringUtils.hasText(division) ? NFLDivision.valueOf(division):null);
+		return teamService.findByTypes(StringUtils.hasText(conference) ? NFLConference.valueOf(conference) : null,
+				StringUtils.hasText(division) ? NFLDivision.valueOf(division) : null);
 	}
-	
+
 	@GetMapping("/{teamId}")
-	public TeamDTO findById(@PathVariable(name="teamId",required = true) UUID teamId) {
+	public TeamDTO findById(@PathVariable(name = "teamId", required = true) UUID teamId) {
 		return teamService.findById(teamId);
 	}
 
 	@PostMapping
-	public ResponseEntity saveTeam(@RequestBody TeamDTO teamDTO){
+	public ResponseEntity saveTeam(@RequestBody TeamDTO teamDTO) {
 		teamService.saveTeam(teamDTO);
 		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping("/score")
-	public ResponseEntity saveTeam(@RequestBody TeamScoreDTO teamScoreDTO){
+	public ResponseEntity saveTeamScore(@RequestBody TeamScoreDTO teamScoreDTO) {
 		teamService.saveTeamScore(teamScoreDTO);
 		return ResponseEntity.ok().build();
 	}
+
 }
