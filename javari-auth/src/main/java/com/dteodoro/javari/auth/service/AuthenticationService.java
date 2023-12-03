@@ -1,8 +1,8 @@
 package com.dteodoro.javari.auth.service;
 
-import com.dteodoro.javari.auth.dto.AuthenticationRequest;
-import com.dteodoro.javari.auth.dto.AuthenticationResponse;
 import com.dteodoro.javari.auth.dto.RegisterRequest;
+import com.dteodoro.javari.commons.dto.AuthenticationRequest;
+import com.dteodoro.javari.commons.dto.AuthenticationResponse;
 import com.dteodoro.javari.core.domain.*;
 import com.dteodoro.javari.core.repository.BettorRepository;
 import com.dteodoro.javari.core.repository.ScoreRepository;
@@ -40,11 +40,11 @@ public class AuthenticationService {
 
 		Bettor bettor = bettorRepo.save(new Bettor(user));
 		Score currentScore = scoreRepo.findByBettorId(bettor.getId()).orElse(null);
-		if(currentScore==null) {
+		if (currentScore == null) {
 			currentScore = scoreRepo.save(new Score(bettor));
 		}
 		bettor.setScore(currentScore);
-		var savedUser =  bettorRepo.save(bettor);
+		var savedUser = bettorRepo.save(bettor);
 
 		var jwtToken = jwtService.generateToken(user);
 		var refreshToken = jwtService.generateRefreshToken(user);
@@ -59,9 +59,7 @@ public class AuthenticationService {
 		authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(
 						request.getEmail(),
-						request.getPassword()
-				)
-		);
+						request.getPassword()));
 		var user = bettorRepo.findByEmail(request.getEmail())
 				.orElseThrow();
 		var jwtToken = jwtService.generateToken(user);
@@ -98,12 +96,11 @@ public class AuthenticationService {
 
 	public void refreshToken(
 			HttpServletRequest request,
-			HttpServletResponse response
-	) throws IOException {
+			HttpServletResponse response) throws IOException {
 		final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 		final String refreshToken;
 		final String userEmail;
-		if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
 			return;
 		}
 		refreshToken = authHeader.substring(7);
@@ -125,20 +122,20 @@ public class AuthenticationService {
 	}
 
 	public BaseUser validateToken(String authHeader) throws IOException {
-			final String refreshToken;
-			final String userEmail;
-			if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-				return null;
-			}
-			refreshToken = authHeader.substring(7);
-			userEmail = jwtService.extractUsername(refreshToken);
-			if (userEmail != null) {
-				var user = this.bettorRepo.findByEmail(userEmail)
-						.orElseThrow();
-				if (jwtService.isTokenValid(refreshToken, user)) {
-					return user;
-				}
-			}
+		final String refreshToken;
+		final String userEmail;
+		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
 			return null;
+		}
+		refreshToken = authHeader.substring(7);
+		userEmail = jwtService.extractUsername(refreshToken);
+		if (userEmail != null) {
+			var user = this.bettorRepo.findByEmail(userEmail)
+					.orElseThrow();
+			if (jwtService.isTokenValid(refreshToken, user)) {
+				return user;
+			}
+		}
+		return null;
 	}
 }

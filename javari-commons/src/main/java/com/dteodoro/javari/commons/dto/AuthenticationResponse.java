@@ -1,4 +1,4 @@
-package com.dteodoro.javari.auth.dto;
+package com.dteodoro.javari.commons.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
