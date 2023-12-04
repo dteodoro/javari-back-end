@@ -92,7 +92,8 @@ public class LoaderServiceImp implements LoaderService {
     private String getAcessToken() {
         String accessToken = null;
         try {
-            accessToken = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+            var auth = SecurityContextHolder.getContext().getAuthentication();
+            accessToken = auth != null ? (String) auth.getCredentials() : null;
             log.info("acessToken:" + accessToken);
             if (!StringUtils.hasText(accessToken)) {
                 log.info("Connect to AuthServer...");
