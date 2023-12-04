@@ -33,7 +33,7 @@ public class EspnScheduleLoaderService implements ScheduleLoader {
 		log.info("Loading NFL Schedule by ESPN API...");
 		try {
 			List<EventImportDTO> events = loadEvent();
-			log.info("Quantity of events loaded {0}",events.size());
+			log.info("Quantity of events loaded {0}", events.size());
 			if (!events.isEmpty()) {
 				return events.stream().map(this::convertToScheduleImportDto).toList();
 			} else {
@@ -42,16 +42,19 @@ public class EspnScheduleLoaderService implements ScheduleLoader {
 		} catch (Exception e) {
 			log.error("Cannot load NFL Events by ESPN API", e);
 		}
-	return null;
+		return null;
 	}
+
 	private List<EventImportDTO> loadEvent() throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(new JavaTimeModule());
 		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 		JsonNode jsonNodeResponse;
 		try {
+			log.info("loading schedule data from ESPN API...");
 			jsonNodeResponse = restTemplate.getForObject(NFLProviderAPI.SCHEDULES_API.getUri(), JsonNode.class);
 			JsonNode eventsNode = jsonNodeResponse != null ? jsonNodeResponse.get("events") : null;
+			log.info("schedule data from ESPN: " + eventsNode);
 			return mapper.readerForListOf(EventImportDTO.class).readValue(eventsNode);
 		} catch (Exception e) {
 			log.error("Cannot load Schedules from Schedule Provider API ");
@@ -62,8 +65,8 @@ public class EspnScheduleLoaderService implements ScheduleLoader {
 
 	private ScheduleImportDTO convertToScheduleImportDto(EventImportDTO event) {
 		var competitors = event.getCompetitions().get(0).getCompetitors().stream()
-								.collect(Collectors.toMap(CompetitorImportDTO::getHomeAway, Function.identity()));
-		
+				.collect(Collectors.toMap(CompetitorImportDTO::getHomeAway, Function.identity()));
+
 		return ScheduleImportDTO.builder()
 				.competitionId(Long.valueOf(event.getCompetitions().get(0).getId()))
 				.name(event.getName())

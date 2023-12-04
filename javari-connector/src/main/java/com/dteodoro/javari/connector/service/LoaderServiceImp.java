@@ -61,6 +61,7 @@ public class LoaderServiceImp implements LoaderService {
         List<ScheduleImportDTO> importSchedules = (List<ScheduleImportDTO>) scheduleLoader.load();
         String accessToken = getAcessToken();
         for (var scheduleDTO : importSchedules.stream().map(ScheduleImportDTO::toDomainDto).toList()) {
+            log.info("saving schedule on game service, scheduleDTO: " + scheduleDTO);
             gameClient.saveSchedule(accessToken, scheduleDTO);
         }
 
@@ -89,15 +90,26 @@ public class LoaderServiceImp implements LoaderService {
     }
 
     private String getAcessToken() {
-        String accessToken = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
-        if (!StringUtils.hasText(accessToken)) {
-            ResponseEntity<AuthenticationResponse> authResponse = authClient
-                    .authenticate(new AuthenticationRequest(systemUserName, systemPassword));
+        String accessToken = null;
+        try {
+            accessToken = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+            log.info("acessToken:" + accessToken);
+            if (!StringUtils.hasText(accessToken)) {
+                log.info("Connect to AuthServer...");
+                ResponseEntity<AuthenticationResponse> authResponse = authClient
+                        .authenticate(new AuthenticationRequest(systemUserName, systemPassword));
+                log.info("responseAuth:" + authResponse.getBody());
 
-            if (authResponse.getStatusCode().equals(HttpStatus.OK)) {
-                accessToken = authResponse.getBody().getAccessToken();
+                if (authResponse.getStatusCode().equals(HttpStatus.OK)) {
+                    accessToken = authResponse.getBody().getAccessToken();
+                    log.info("accessTokenResponse" + accessToken);
+                }
             }
+        } catch (Exception e) {
+            log.error("cannot connect to AuthService:" + e.getMessage());
+            e.printStackTrace();
         }
+
         return accessToken;
     }
 }

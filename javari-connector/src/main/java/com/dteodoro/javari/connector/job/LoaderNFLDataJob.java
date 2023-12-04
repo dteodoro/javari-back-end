@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Slf4j
 public class LoaderNFLDataJob {
-	
+
 	private final LoaderService loaderService;
 	private static final String EVERY_DAY_6AM = "0 */4 * * * *";
 
@@ -21,8 +21,9 @@ public class LoaderNFLDataJob {
 		log.info("Loader Schedule JOB: Starting load data...");
 		try {
 			loaderService.loadSchedules();
-		}catch (Exception e){
-			log.error("Loader Schedule JOB: Cannot load schedule data",e.getCause());
+		} catch (Exception e) {
+			log.error("Loader Schedule JOB: Cannot load schedule data", e.getCause());
+			e.printStackTrace();
 		}
 		log.info("Load Schedule Job has finished");
 	}
