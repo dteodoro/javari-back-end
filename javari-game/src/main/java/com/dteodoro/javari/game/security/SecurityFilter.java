@@ -22,25 +22,29 @@ import java.io.IOException;
 public class SecurityFilter extends OncePerRequestFilter {
 
 	private final AuthClient authClient;
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
 		var tokenJWT = request.getHeader("Authorization");
-
+		log.info("[GAME] - SecurityFilter - token: " + tokenJWT);
 		if (tokenJWT != null) {
 			try {
+				log.info("[GAME] - SecurityFilter - validate token...");
 				UserDTO user = authClient.validateToken(tokenJWT);
+				log.info("[GAME] - SecurityFilter - user: " + user);
+
 				if (user != null) {
-					var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities().stream().map(SimpleGrantedAuthority::new).toList());
+					var authentication = new UsernamePasswordAuthenticationToken(user, null,
+							user.getAuthorities().stream().map(SimpleGrantedAuthority::new).toList());
 					SecurityContextHolder.getContext().setAuthentication(authentication);
 				}
-			}catch (Exception e){
-				log.error("erro ao buscar o usuário ",e);
+			} catch (Exception e) {
+				log.error("erro ao buscar o usuário ", e);
 			}
 		}
 		filterChain.doFilter(request, response);
 	}
-
 
 }

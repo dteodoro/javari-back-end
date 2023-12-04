@@ -8,6 +8,8 @@ import com.dteodoro.javari.core.domain.*;
 import com.dteodoro.javari.core.repository.CompetitorRepository;
 import com.dteodoro.javari.core.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepo;
@@ -43,7 +46,7 @@ public class ScheduleService {
         return scheduleDTO;
     }
 
-    private ScheduleDTO convertToScheduleDTO(Schedule schedule){
+    private ScheduleDTO convertToScheduleDTO(Schedule schedule) {
         return ScheduleDTO.builder()
                 .id(schedule.getId())
                 .name(schedule.getName())
@@ -53,13 +56,13 @@ public class ScheduleService {
                 .seasonCalendar(convetToSeasonCalendarDTO(schedule.getSeasonCalendar()))
                 .competitors(List.of(mapper.map(schedule.getHomeCompetitor(), CompetitorDTO.class),
                         mapper.map(schedule.getAwayCompetitor(), CompetitorDTO.class)))
-                .bet(schedule.getBets() != null ? mapper.map(schedule.getBets(),BetDTO.class) : null)
+                .bet(schedule.getBets() != null ? mapper.map(schedule.getBets(), BetDTO.class) : null)
                 .build();
     }
 
     private SeasonCalendarDTO convetToSeasonCalendarDTO(SeasonCalendar seasonCalendar) {
         return SeasonCalendarDTO.builder()
-                .season(mapper.map(seasonCalendar.getSeason(),SeasonDTO.class))
+                .season(mapper.map(seasonCalendar.getSeason(), SeasonDTO.class))
                 .startDate(seasonCalendar.getStartDate())
                 .endDate(seasonCalendar.getEndDate())
                 .label(seasonCalendar.getLabel())
@@ -94,29 +97,29 @@ public class ScheduleService {
         scheduleRepo.save(currentSchedule);
 
         boolean haveOpenSchedulesOnTheSameDay = checkSchedulesOpenOnTheSameDay(currentSchedule.getStartDate());
-        if(!haveOpenSchedulesOnTheSameDay) {
+        if (!haveOpenSchedulesOnTheSameDay) {
             bettorService.updatePosition();
         }
     }
 
     private boolean checkSchedulesOpenOnTheSameDay(final LocalDateTime startDate) {
-       return scheduleRepo.countByStartDateAndStatusNotIn(
-                 startDate.withHour(0)
-                ,startDate.withHour(0).plusDays(1)
-                ,ScheduleStatus.STATUS_FINAL) > 0;
+        return scheduleRepo.countByStartDateAndStatusNotIn(
+                startDate.withHour(0), startDate.withHour(0).plusDays(1), ScheduleStatus.STATUS_FINAL) > 0;
     }
 
     public List<ScheduleBySeasonDTO> findByTeam(UUID teamId, Integer year) {
         return convertToScheduleBySeasonDTO(
                 scheduleRepo.findByHomeCompetitorTeamIdOrAwayCompetitorTeamIdAndSeasonCalendarSeasonCompetitionYear(
-                        teamId,teamId, year));
+                        teamId, teamId, year));
     }
 
     public void saveOrUpdate(ScheduleDTO scheduleDto) {
         Schedule currentSchedule = findByCompetitionId(scheduleDto.getCompetitionId());
         if (currentSchedule != null && !currentSchedule.getStatus().equals(scheduleDto.getStatus())) {
+            log.info("update schedule...");
             updateSchedule(currentSchedule, scheduleDto);
         } else if (currentSchedule == null) {
+            log.info("save new schedule...");
             save(convertToSchedule(scheduleDto));
         }
     }
@@ -127,9 +130,9 @@ public class ScheduleService {
         homeCompetitor.setTeam(teamService.findByEspnId(homeCompetitor.getTeam().getEspnId()));
         awayCompetitor.setTeam(teamService.findByEspnId(awayCompetitor.getTeam().getEspnId()));
         SeasonCalendar seasonCalendar = seasonService.findByWeekAndSeasonSlugAndSeasonCompetitionYear(
-                                                        scheduleDto.getWeek(),
-                                                        scheduleDto.getSeason().getSlug(),
-                                                        scheduleDto.getSeason().getCompetitionYear());
+                scheduleDto.getWeek(),
+                scheduleDto.getSeason().getSlug(),
+                scheduleDto.getSeason().getCompetitionYear());
         return Schedule.builder()
                 .competitionId(scheduleDto.getCompetitionId())
                 .name(scheduleDto.getName())
@@ -154,14 +157,15 @@ public class ScheduleService {
     }
 
     private CompetitorDTO getCompetitor(ScheduleDTO schedule, HomeAway homeAway) {
-        return schedule.getCompetitors().stream().filter(c -> c.getHomeAway().equals(homeAway)).findFirst().orElse(null);
+        return schedule.getCompetitors().stream().filter(c -> c.getHomeAway().equals(homeAway)).findFirst()
+                .orElse(null);
     }
 
     public List<ScheduleDTO> findAllSchedules(UUID bettorId, UUID seasonId, UUID weekId) {
         List<Schedule> schedules;
         if (seasonId != null) {
             if (weekId != null) {
-                schedules = scheduleRepo.findBySeasonIdAndWeekId(seasonId,weekId);
+                schedules = scheduleRepo.findBySeasonIdAndWeekId(seasonId, weekId);
             } else {
                 schedules = scheduleRepo.findBySeasonId(seasonId);
             }
@@ -171,36 +175,37 @@ public class ScheduleService {
         return schedules.stream().map(s -> convertToScheduleDTO(s, bettorId)).toList();
     }
 
-    public List<ScheduleBySeasonDTO> findAllSchedulesBySeasonAndBettorId(final Integer seasonYear, final UUID bettorId) {
-        return convertToScheduleBySeasonDTO(scheduleRepo.findAllSchedulesByCompetitionYear(seasonYear),bettorId);
+    public List<ScheduleBySeasonDTO> findAllSchedulesBySeasonAndBettorId(final Integer seasonYear,
+            final UUID bettorId) {
+        return convertToScheduleBySeasonDTO(scheduleRepo.findAllSchedulesByCompetitionYear(seasonYear), bettorId);
     }
 
-    private List<ScheduleBySeasonDTO> convertToScheduleBySeasonDTO(List<Schedule> schedules){
-        return convertToScheduleBySeasonDTO(schedules,null);
+    private List<ScheduleBySeasonDTO> convertToScheduleBySeasonDTO(List<Schedule> schedules) {
+        return convertToScheduleBySeasonDTO(schedules, null);
     }
 
-    private List<ScheduleBySeasonDTO> convertToScheduleBySeasonDTO(List<Schedule> schedules,UUID bettorId){
+    private List<ScheduleBySeasonDTO> convertToScheduleBySeasonDTO(List<Schedule> schedules, UUID bettorId) {
         return schedules.stream()
                 .filter(s -> s.getStatus().equals(ScheduleStatus.STATUS_FINAL))
-                .map( s -> {
-                        return bettorId == null ? convertToScheduleDTO(s) : convertToScheduleDTO(s, bettorId);
-                      })
+                .map(s -> {
+                    return bettorId == null ? convertToScheduleDTO(s) : convertToScheduleDTO(s, bettorId);
+                })
                 .toList()
                 .stream()
                 .collect(Collectors.groupingBy(s -> s.getSeasonCalendar().getSeason().getLabel()))
                 .entrySet().stream()
-                .map(entry->new ScheduleBySeasonDTO(entry.getKey(),entry.getValue())).toList();
+                .map(entry -> new ScheduleBySeasonDTO(entry.getKey(), entry.getValue())).toList();
     }
 
     public long findOpenSchedulesWithoutBets(final UUID bettorId) {
         final List<Schedule> openSchedules = scheduleRepo.findByStatus(ScheduleStatus.STATUS_SCHEDULED);
-        return openSchedules.stream().filter(s->{
-            if(s.getBets().isEmpty()) {
+        return openSchedules.stream().filter(s -> {
+            if (s.getBets().isEmpty()) {
                 return true;
-            }else{
+            } else {
                 return !s.getBets().contains(new Bet(bettorId));
             }
-         }).count();
+        }).count();
     }
 
     public Integer countCloseSchedules() {
