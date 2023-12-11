@@ -9,7 +9,7 @@ spring:
         - id: javari-auth-service
           uri: lb://javari-auth-service
           predicates:
-              - Path=/api/v1/auth/**
+            - Path=/api/v1/auth/**
         - id: javari-game-service
           uri: lb://javari-game-service
           predicates:
@@ -20,8 +20,10 @@ spring:
             - Path=/api/v1/connector/loader/**
       globalcors:
         cors-configurations:
-          '[/**]':
-            allowedOrigins: "http://javari.ddns.net/"
+          "[/**]":
+            allowedOrigins:
+              - "http://roles.fun"
+              - "http://177.60.39.194"
             allowedHeaders: "*"
             allowedMethods:
               - GET
@@ -47,5 +49,3 @@ logging:
           gateway: trace
           route:
             RouteDefinitionLocator: debug
-
-
