@@ -9,6 +9,8 @@ import com.dteodoro.javari.core.repository.TeamScoreRepository;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class TeamService {
 
 	private final TeamRespository teamRepo;
@@ -132,12 +135,16 @@ public class TeamService {
 
 	public void saveTeamScore(final TeamScoreDTO teamScoreDTO) {
 		Team team = teamRepo.findByEspnId(teamScoreDTO.getTeamId());
+		log.info("Team Score Saving..., team: " + team.getName());
 		TeamScore score;
 		if (team.getScore() != null) {
 			score = team.getScore();
 		} else {
 			score = new TeamScore();
 		}
+		log.info("Stats Atual: " + team.getScore().getScoreSummary());
+		log.info("Stats ESPN: " + teamScoreDTO.getWins() + "-" + teamScoreDTO.getLosses() + "-"
+				+ teamScoreDTO.getTies());
 		score.setWins(teamScoreDTO.getWins());
 		score.setLosses(teamScoreDTO.getLosses());
 		score.setTies(teamScoreDTO.getTies());
@@ -155,7 +162,11 @@ public class TeamService {
 		score.updateScoreSummary();
 		teamScoreRepo.save(score);
 		team.setScore(score);
+		log.info("Score saved : " + score.getScoreSummary());
 		teamRepo.save(team);
+		log.info("Stats After update: " + team.getScore().getScoreSummary());
+		log.info("Team Score finish");
+
 	}
 
 	private double calcWinPercent(String winPercent) {
