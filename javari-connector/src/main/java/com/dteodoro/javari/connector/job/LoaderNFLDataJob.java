@@ -21,6 +21,7 @@ public class LoaderNFLDataJob {
 		log.info("Loader Schedule JOB: Starting load data...");
 		try {
 			loaderService.loadSchedules();
+			loaderService.loadStandings();
 		} catch (Exception e) {
 			log.error("Loader Schedule JOB: Cannot load schedule data", e.getCause());
 			e.printStackTrace();

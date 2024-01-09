@@ -61,7 +61,7 @@ public class LoaderServiceImp implements LoaderService {
         List<ScheduleImportDTO> importSchedules = (List<ScheduleImportDTO>) scheduleLoader.load();
         String accessToken = getAcessToken();
         for (var scheduleDTO : importSchedules.stream().map(ScheduleImportDTO::toDomainDto).toList()) {
-            log.info("saving schedule on game service, scheduleDTO: " + scheduleDTO);
+            log.info("saving schedule on game service");
             gameClient.saveSchedule(accessToken, scheduleDTO);
         }
 
