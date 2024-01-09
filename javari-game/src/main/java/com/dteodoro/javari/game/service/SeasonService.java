@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class SeasonService {
-	
+
 	private final SeasonRepository seasonRepo;
 	private final SeasonCalendarRepository seasonCalendarRepo;
 	private final CompetitionService competitionService;
@@ -32,10 +32,11 @@ public class SeasonService {
 	}
 
 	public void save(SeasonDTO seasonDTO) {
-		Season currentSeason = seasonRepo.findByLabelAndCompetitionYear(seasonDTO.getSlug(),seasonDTO.getCompetitionYear()).orElse(null);
-		if(currentSeason == null){
+		Season currentSeason = seasonRepo
+				.findByLabelAndCompetitionYear(seasonDTO.getSlug(), seasonDTO.getCompetitionYear()).orElse(null);
+		if (currentSeason == null) {
 			Season seasonSaved = create(convetToSeason(seasonDTO));
-			createSeasonCalendar(seasonDTO.getSeasonCalendars(),seasonSaved);
+			createSeasonCalendar(seasonDTO.getSeasonCalendars(), seasonSaved);
 		}
 	}
 
@@ -47,7 +48,7 @@ public class SeasonService {
 		return season;
 	}
 
-	private void createSeasonCalendar(List<SeasonCalendarDTO> seasonCalendars,Season season) {
+	private void createSeasonCalendar(List<SeasonCalendarDTO> seasonCalendars, Season season) {
 		seasonCalendars.stream()
 				.map(dto -> mapper.map(dto, SeasonCalendar.class))
 				.forEach(s -> {
@@ -60,30 +61,31 @@ public class SeasonService {
 		seasonRepo.save(season);
 	}
 
-
 	public void updateCalendar(SeasonCalendar seasonCalendar) {
 		seasonCalendarRepo.save(seasonCalendar);
 	}
 
-	public SeasonCalendar findByWeekAndSeasonSlugAndSeasonCompetitionYear(Integer week, String seasonSlug, Integer competitionYear) {
-		return seasonCalendarRepo.findByWeekAndSeasonSlugAndSeasonCompetitionYear(week,seasonSlug,competitionYear);
+	public SeasonCalendar findByWeekAndSeasonSlugAndSeasonCompetitionYear(Integer week, String seasonSlug,
+			Integer competitionYear) {
+		return seasonCalendarRepo.findByWeekAndSeasonSlugAndSeasonCompetitionYear(week, seasonSlug, competitionYear);
 	}
 
 	public List<SeasonFilterDTO> getSeasonFilters() {
 		List<SeasonFilterDTO> seasonFilters = new ArrayList<>();
-		List<SeasonCalendar> seasonsCalendar = seasonCalendarRepo.findSeasonCalendarBySeasonCompetitionYearOrderByStartDate(LocalDate.now().getYear());
-		Map<Season, List<SeasonCalendar>> seasons = seasonsCalendar.stream().collect(Collectors.groupingBy(sc -> sc.getSeason()));
-		seasons.forEach((season,weeks)-> seasonFilters.add(
+		List<SeasonCalendar> seasonsCalendar = seasonCalendarRepo
+				.findSeasonCalendarBySeasonCompetitionYearOrderByStartDate(2023);
+		Map<Season, List<SeasonCalendar>> seasons = seasonsCalendar.stream()
+				.collect(Collectors.groupingBy(sc -> sc.getSeason()));
+		seasons.forEach((season, weeks) -> seasonFilters.add(
 				SeasonFilterDTO.builder()
 						.seasonId(season.getId())
 						.seasonLabel(season.getLabel())
 						.weeks(weeks.stream().map(this::convertToWeekFilterDTO).toList())
-						.build()
-		));
+						.build()));
 		return seasonFilters;
 	}
 
 	private WeekFilterDTO convertToWeekFilterDTO(SeasonCalendar seasonCalendar) {
-		return new WeekFilterDTO(seasonCalendar.getId(),seasonCalendar.getLabel());
+		return new WeekFilterDTO(seasonCalendar.getId(), seasonCalendar.getLabel());
 	}
 }
