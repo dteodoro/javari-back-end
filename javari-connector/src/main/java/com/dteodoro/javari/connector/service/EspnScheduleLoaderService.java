@@ -54,7 +54,7 @@ public class EspnScheduleLoaderService implements ScheduleLoader {
 			log.info("loading schedule data from ESPN API...");
 			jsonNodeResponse = restTemplate.getForObject(NFLProviderAPI.SCHEDULES_API.getUri(), JsonNode.class);
 			JsonNode eventsNode = jsonNodeResponse != null ? jsonNodeResponse.get("events") : null;
-			log.info("schedule data from ESPN: " + eventsNode);
+			// log.info("schedule data from ESPN: " + eventsNode);
 			return mapper.readerForListOf(EventImportDTO.class).readValue(eventsNode);
 		} catch (Exception e) {
 			log.error("Cannot load Schedules from Schedule Provider API ");
