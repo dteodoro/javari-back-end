@@ -1,16 +1,19 @@
 package com.dteodoro.javari.game.service;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import com.dteodoro.javari.commons.dto.BettorDTO;
 import com.dteodoro.javari.commons.dto.TeamDTO;
 import com.dteodoro.javari.core.domain.Bettor;
 import com.dteodoro.javari.core.domain.Team;
 import com.dteodoro.javari.core.repository.BettorRepository;
+
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ public class BettorService {
 	private final TeamService teamService;
 
 	public BettorDTO findBettorDetails(UUID bettorId) {
+
 		return modelMapper.map(bettorRepo.findById(bettorId).orElse(null), BettorDTO.class);
 
 	}

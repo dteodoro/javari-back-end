@@ -15,11 +15,11 @@ public class ScoreService {
 
     public void setPoint(Bet bet, final Integer numberOfCloseSchedules) {
         Score currentScore = scoreRepo.findByBettorId(bet.getBettorId()).orElse(null);
-        if(currentScore != null ) {
+        if (currentScore != null) {
             currentScore.setPoints(currentScore.getPoints() + bet.getBet().getScore());
             currentScore.setNumberOfHits(currentScore.getNumberOfHits() + 1);
             currentScore.setAmountBetMade(numberOfCloseSchedules);
-            currentScore.setEfficiencyPercentage(currentScore.calcEfficiencyPercentage());
+            currentScore.updateEfficiencyPercentage();
             scoreRepo.save(currentScore);
         }
     }
@@ -30,7 +30,7 @@ public class ScoreService {
 
     public Score createScore(Bettor bettor) {
         Score currentScore = scoreRepo.findByBettorId(bettor.getId()).orElse(null);
-        if(currentScore==null) {
+        if (currentScore == null) {
             return scoreRepo.save(new Score(bettor));
         }
         return currentScore;
@@ -38,12 +38,10 @@ public class ScoreService {
 
     public void addToAmountBet(final Bet bet) {
         Score currentScore = scoreRepo.findByBettorId(bet.getBettorId()).orElse(null);
-        if(currentScore != null ) {
-            currentScore.setAmountBetMade(currentScore.getAmountBetMade()+1);
+        if (currentScore != null) {
+            currentScore.setAmountBetMade(currentScore.getAmountBetMade() + 1);
             scoreRepo.save(currentScore);
         }
     }
 
-    public void updateBettorRank() {
-    }
 }

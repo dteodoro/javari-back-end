@@ -70,7 +70,7 @@ public class LoaderServiceImp implements LoaderService {
 
     @Override
     public void loadSeasons() {
-        Collection<SeasonImportDTO> importSeasons = (Collection<SeasonImportDTO>) seasonLoader.load();
+        List<SeasonImportDTO> importSeasons = (List<SeasonImportDTO>) seasonLoader.load();
         String accessToken = getAcessToken();
         for (SeasonDTO seasonDTO : importSeasons.stream().map(SeasonImportDTO::toDomainDto).toList()) {
             gameClient.saveSeason(accessToken, seasonDTO);
