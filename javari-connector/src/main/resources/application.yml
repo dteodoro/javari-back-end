@@ -2,7 +2,7 @@ server:
   port: 0
 api:
   core:
-    url: "http://game"
+    url: "http://javari-game-service"
 javari:
   client:
     front: "http://javari-front"
@@ -14,10 +14,10 @@ spring:
 eureka:
   instance:
     prefer-ip-address: false
-    hostname: discovery
+    hostname: javari-discovery-service
   client:
     service-url:
-      defaultZone: http://discovery:8761/eureka/
+      defaultZone: http://javari-discovery-service:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
 

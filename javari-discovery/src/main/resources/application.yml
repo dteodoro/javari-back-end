@@ -1,13 +1,13 @@
 spring:
   application:
-    name: javari-registry
+    name: javari-discovery-service
 
 server:
   port: 8761
 
 eureka:
   instance:
-    hostname: discovery
+    hostname: javari-discovery-service
     prefer-ip-address: false
   client:
     register-with-eureka: false
