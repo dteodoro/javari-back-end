@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8080
 spring:
   application:
     name: javari-gateway
@@ -7,15 +7,15 @@ spring:
     gateway:
       routes:
         - id: javari-auth-service
-          uri: lb://javari-auth-service:8082
+          uri: lb://javari-auth-service
           predicates:
             - Path=/api/v1/auth/**
         - id: javari-game-service
-          uri: lb://javari-game-service::8083
+          uri: lb://javari-game-service
           predicates:
             - Path=/api/v1/game/**
         - id: javari-connector-service
-          uri: lb://javari-connector-service:8084
+          uri: lb://javari-connector-service
           predicates:
             - Path=/api/v1/connector/loader/**
       globalcors:
@@ -34,7 +34,7 @@ eureka:
     prefer-ip-address: true
   client:
     service-url:
-      defaultZone: http://javari-discovery-service:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
 
