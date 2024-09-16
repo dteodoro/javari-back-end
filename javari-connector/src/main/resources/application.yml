@@ -1,11 +1,11 @@
 server:
-  port: 8084
+  port: 0
 api:
   core:
-    url: "http://javari-game-service"
+    url: "http://localhost:8081"
 javari:
   client:
-    front: "http://javari-front"
+    front: "http://localhost:8081"
 spring:
   application:
     name: javari-connector-service
@@ -14,10 +14,10 @@ spring:
 eureka:
   instance:
     prefer-ip-address: false
-    hostname: javari-discovery-service
+    hostname: localhost
   client:
     service-url:
-      defaultZone: http://javari-discovery-service:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
 
