@@ -29,6 +29,10 @@ public class TeamScore {
 	private Integer seasonYear;
 	private String seasonName;
 
+	public TeamScore() {
+		updateScoreSummary();
+	}
+
 	public void updateScoreSummary(){
 		scoreSummary = wins+" - "+losses+" - "+ties;
 	}

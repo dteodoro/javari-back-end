@@ -1,0 +1,11 @@
+.idea
+.mvn
+.vscode
+.dockerignore
+build-images.sh
+Jenkinsfile
+mvnw
+mvnw.cmd
+db-data
+mnt
+.gitignore

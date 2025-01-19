@@ -18,7 +18,7 @@ public enum NFLStats {
     DIFF("differential"),
     STRK("streak");
 
-    private String description;
+    private final String description;
     NFLStats(String description){
         this.description = description;
     }

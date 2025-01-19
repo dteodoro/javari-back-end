@@ -23,7 +23,7 @@ class LoaderControllerTest {
     @Test
     @DisplayName("Load teams by external provider")
     public void loadTeams_ReturnsListOfTeam(){
-        assertEquals(true,true);
+        assertTrue(true);
     }
   
 }

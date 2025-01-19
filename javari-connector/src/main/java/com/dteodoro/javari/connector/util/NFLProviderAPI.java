@@ -9,7 +9,7 @@ public enum NFLProviderAPI {
 	STANDINGS_API("https://cdn.espn.com/core/nfl/standings?xhr=1");
 
 	@Getter 
-	private String uri;
+	private final String uri;
 
 	NFLProviderAPI(String uri) {
 		this.uri = uri;

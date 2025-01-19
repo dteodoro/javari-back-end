@@ -8,6 +8,5 @@ import com.dteodoro.javari.core.domain.Season;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SeasonRepository extends JpaRepository<Season, UUID> {
-	Optional<Season> findByLabelAndCompetitionYear(String seasonSlug, Integer competitionYear);
-	List<Season> findSeasonByCompetitionYear(int year);
+	Optional<Season> findBySlugAndCompetitionYear(String slug, Integer competitionYear);
 }

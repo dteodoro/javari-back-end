@@ -12,10 +12,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import com.dteodoro.javari.commons.enumeration.NFLConference;
 
 public interface TeamRespository extends JpaRepository<Team, UUID>, JpaSpecificationExecutor<Team>{
-	public Team findByEspnId(Long espnId);
-	public Optional<List<Team>> findByConference(NFLConference conference);
+	Team findByEspnId(Long espnId);
+	Optional<List<Team>> findByConference(NFLConference conference);
 
 	List<Team> findByConferenceAndDivision(NFLConference conference, NFLDivision division);
 
-    public Team findByAbbreviation(String abbreviation);
+    Team findByAbbreviation(String abbreviation);
 }

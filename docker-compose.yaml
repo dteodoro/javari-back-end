@@ -1,0 +1,126 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: javari-db
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: javari
+      MYSQL_DATABASE: javaridb
+    volumes:
+      - ./db-data:/var/lib/mysql
+    restart: always
+    networks:
+      - javari_net
+
+  discovery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: javari-discovery
+    container_name: javari-discovery
+    ports:
+      - 8761:8761
+    networks:
+      - javari_net
+
+  auth:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: javari-auth
+    container_name: javari-auth
+    ports:
+      - 8081:8081
+      - 5006:5006
+    environment:
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+    depends_on:
+      - db
+      - discovery
+    networks:
+      - javari_net
+    stdin_open: true
+    tty: true
+    restart: always
+
+  game:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: javari-game
+    container_name: javari-game
+    volumes:
+      - ./mnt/storage/javari_files/:/mnt/storage/javari_files/
+    ports:
+      - 8083:8083
+      - 5005:5005
+    environment:
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+    depends_on:
+      - db
+      - discovery
+      - auth
+    networks:
+      - javari_net
+    stdin_open: true
+    tty: true
+    restart: always
+
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: javari-gateway
+    container_name: javari-gateway
+    ports:
+      - 8080:8080
+    environment:
+      - JAVARI_FRONT_URL=http://local.darioteodoro.dev.br:3000
+      - JAVARI_FRONT_PORT=8080
+    depends_on:
+      - db
+      - discovery
+      - auth
+    networks:
+      - javari_net
+    stdin_open: true
+    tty: true
+    restart: always
+
+  connector:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: javari-connector
+    container_name: javari-connector
+    ports:
+      - 8084:8084
+      - 5007:5007
+    environment:
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007
+      - JAVARI_CONNECTOR_USER=dario.teodoro@live.com
+      - JAVARI_CONNECTOR_PASSWORD=javar1
+    depends_on:
+      - gateway
+    networks:
+      - javari_net
+    stdin_open: true
+    tty: true
+    restart: always
+
+  front:
+   image: localhost/javari-front
+   container_name: javari-front-end
+   ports:
+     - 3000:80
+   depends_on:
+     - gateway
+   networks:
+     - javari_net
+   stdin_open: true
+   tty: true
+   restart: always
+networks:
+  javari_net:
+    driver: bridge

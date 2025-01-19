@@ -1,9 +1,6 @@
 package com.dteodoro.javari.game.service;
 
-import com.dteodoro.javari.commons.dto.SeasonCalendarDTO;
-import com.dteodoro.javari.commons.dto.SeasonDTO;
-import com.dteodoro.javari.commons.dto.SeasonFilterDTO;
-import com.dteodoro.javari.commons.dto.WeekFilterDTO;
+import com.dteodoro.javari.commons.dto.*;
 import com.dteodoro.javari.core.domain.Season;
 import com.dteodoro.javari.core.domain.SeasonCalendar;
 import com.dteodoro.javari.core.repository.SeasonCalendarRepository;
@@ -26,6 +23,7 @@ public class SeasonService {
 	private final SeasonCalendarRepository seasonCalendarRepo;
 	private final CompetitionService competitionService;
 	private final ModelMapper mapper;
+	private final SeasonCalendarRepository seasonCalendarRepository;
 
 	public Season create(Season season) {
 		return seasonRepo.save(season);
@@ -33,11 +31,15 @@ public class SeasonService {
 
 	public void save(SeasonDTO seasonDTO) {
 		Season currentSeason = seasonRepo
-				.findByLabelAndCompetitionYear(seasonDTO.getSlug(), seasonDTO.getCompetitionYear()).orElse(null);
+				.findBySlugAndCompetitionYear(seasonDTO.getSlug(), seasonDTO.getCompetitionYear()).orElse(null);
 		if (currentSeason == null) {
 			Season seasonSaved = create(convetToSeason(seasonDTO));
 			createSeasonCalendar(seasonDTO.getSeasonCalendars(), seasonSaved);
 		}
+	}
+
+	public Season findByLabelAndCompetitionYear(String slug, Integer competitionYear) {
+		return seasonRepo.findBySlugAndCompetitionYear(slug, competitionYear).orElse(null);
 	}
 
 	private Season convetToSeason(SeasonDTO seasonDTO) {
@@ -49,12 +51,16 @@ public class SeasonService {
 	}
 
 	private void createSeasonCalendar(List<SeasonCalendarDTO> seasonCalendars, Season season) {
-		seasonCalendars.stream()
-				.map(dto -> mapper.map(dto, SeasonCalendar.class))
-				.forEach(s -> {
-					s.setSeason(season);
-					seasonCalendarRepo.save(s);
-				});
+		if(seasonCalendars == null || seasonCalendars.isEmpty()){
+			var calendar = new SeasonCalendar();
+		}else {
+			seasonCalendars.stream()
+					.map(dto -> mapper.map(dto, SeasonCalendar.class))
+					.forEach(s -> {
+						s.setSeason(season);
+						seasonCalendarRepo.save(s);
+					});
+		}
 	}
 
 	public void update(Season season) {
@@ -87,5 +93,35 @@ public class SeasonService {
 
 	private WeekFilterDTO convertToWeekFilterDTO(SeasonCalendar seasonCalendar) {
 		return new WeekFilterDTO(seasonCalendar.getId(), seasonCalendar.getLabel());
+	}
+
+	public SeasonCalendar findOrCreateSeasonCalendar(final ScheduleDTO scheduleDto) {
+		SeasonCalendar seasonCalendar = findByWeekAndSeasonSlugAndSeasonCompetitionYear(
+				scheduleDto.getWeek(),
+				scheduleDto.getSeason().getSlug(),
+				scheduleDto.getSeason().getCompetitionYear());
+		if(seasonCalendar == null) {
+			final Season currentSeason = findByLabelAndCompetitionYear(scheduleDto.getSeason().getSlug(), scheduleDto.getSeason().getCompetitionYear());
+			if(currentSeason == null) {
+				save(scheduleDto.getSeason());
+				return findOrCreateSeasonCalendar(scheduleDto);
+			}else {
+				if(scheduleDto.getSeasonCalendar() == null){
+					var calendar = new SeasonCalendarDTO();
+					calendar.setSeason(scheduleDto.getSeason());
+					calendar.setWeek(scheduleDto.getWeek());
+					calendar.setLabel("N/A");
+					calendar.setDetail("N/A");
+					calendar.setStartDate(scheduleDto.getStartDate());
+					scheduleDto.setSeasonCalendar(calendar);
+				}
+				createSeasonCalendar(List.of(scheduleDto.getSeasonCalendar()), currentSeason);
+			}
+			seasonCalendar = findByWeekAndSeasonSlugAndSeasonCompetitionYear(
+					scheduleDto.getWeek(),
+					scheduleDto.getSeason().getSlug(),
+					scheduleDto.getSeason().getCompetitionYear());
+		}
+		return seasonCalendar;
 	}
 }

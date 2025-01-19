@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 public enum SeasonType {
-	PRESEASON(1,"preseaon"), REGULAR_SEASON(2,"regular-season"), POSTSEASON(3,"postseason"),OFF_SEASON(4,"off-season");
+	PRESEASON(1,"preseaon"), REGULAR_SEASON(2,"regularseason"), POSTSEASON(3,"postseason"),OFF_SEASON(4,"offseason");
 
 	@Getter private int id;
 	@Getter private String slug;

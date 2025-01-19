@@ -1,7 +1,6 @@
 package com.dteodoro.javari.connector.dto;
 
 import com.dteodoro.javari.commons.dto.SeasonDTO;
-import com.dteodoro.javari.commons.enumeration.SeasonType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;

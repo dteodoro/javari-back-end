@@ -23,11 +23,11 @@
 	<modules>
 		<module>javari-commons</module>
 		<module>javari-discovery</module>
-		<module>javari-gateway</module>
 		<module>javari-auth</module>
 		<module>javari-core</module>
 		<module>javari-game</module>
 		<module>javari-connector</module>
+		<module>javari-gateway</module>
 	</modules>
 	<dependencies>
 		<dependency>

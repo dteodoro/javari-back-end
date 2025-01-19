@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.dteodoro.javari.commons.dto.SeasonDTO;
-import com.dteodoro.javari.commons.enumeration.SeasonType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.util.StringUtils;
 
@@ -68,6 +67,6 @@ public class SeasonImportDTO implements ImportDataDTO {
 	}
 
 	private String formatToSlug(String label) {
-		return StringUtils.hasText(label) ? label.trim().toLowerCase().replace(" ","-") : null;
+		return StringUtils.hasText(label) ? label.trim().toLowerCase().replace(" ","-").replace("-","") : null;
 	}
 }

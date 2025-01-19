@@ -17,11 +17,11 @@ spring:
         - id: javari-connector-service
           uri: lb://javari-connector-service
           predicates:
-            - Path=/api/v1/connector/loader/**
+            - Path=/api/v1/connector/**
       globalcors:
         cors-configurations:
           "[/**]":
-            allowedOrigins: "http://darioteodoro.dev.br"
+            allowedOrigins: ${JAVARI_FRONT_URL}
             allowedHeaders: "*"
             allowedMethods:
               - GET
@@ -34,7 +34,7 @@ eureka:
     prefer-ip-address: true
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://javari-discovery:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
 

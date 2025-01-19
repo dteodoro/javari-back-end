@@ -5,5 +5,5 @@ import com.dteodoro.javari.commons.dto.DomainDTO;
 import java.io.Serializable;
 
 public interface ImportDataDTO extends Serializable {
-    public DomainDTO toDomainDto();
+    DomainDTO toDomainDto();
 }

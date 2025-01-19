@@ -32,8 +32,8 @@ public enum TeamConferenceDivisionBind {
 	ARI(NFLConference.NFC, NFLDivision.WEST), LAR(NFLConference.NFC, NFLDivision.WEST),
 	SF(NFLConference.NFC, NFLDivision.WEST), SEA(NFLConference.NFC, NFLDivision.WEST);
 
-	private NFLConference conference;
-	private NFLDivision division;
+	private final NFLConference conference;
+	private final NFLDivision division;
 
 	TeamConferenceDivisionBind(NFLConference conference, NFLDivision division) {
 		this.conference = conference;

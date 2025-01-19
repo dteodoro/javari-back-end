@@ -36,6 +36,9 @@ public class TeamService {
 		if (currentTeam != null) {
 			team.setId(currentTeam.getId());
 		}
+		if (team.getScore() == null || team.getScore().getId() == null) {
+			team.setScore(teamScoreRepo.save(new TeamScore()));
+		}
 		teamRepo.save(team);
 	}
 
@@ -72,12 +75,12 @@ public class TeamService {
 		return (root, query, builder) -> {
 			List<Predicate> predicates = new ArrayList<>();
 			if (teamForm.getConference() != null) {
-				Path<NFLConference> conferencePath = root.<NFLConference>get("conference");
+				Path<NFLConference> conferencePath = root.get("conference");
 				Predicate conferencePredicate = builder.equal(conferencePath, teamForm.getConference());
 				predicates.add(conferencePredicate);
 			}
 			if (teamForm.getDivision() != null) {
-				Path<NFLDivision> divisionPath = root.<NFLDivision>get("division");
+				Path<NFLDivision> divisionPath = root.get("division");
 				Predicate divisionPredicate = builder.equal(divisionPath, teamForm.getDivision());
 				predicates.add(divisionPredicate);
 			}

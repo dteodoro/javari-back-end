@@ -7,10 +7,12 @@ import com.dteodoro.javari.commons.security.JavariAuthClient;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+@Service
 @FeignClient("javari-auth-service")
 public interface AuthClient extends JavariAuthClient {
 	@PostMapping(value = "/api/v1/auth/validate-token", consumes = MediaType.APPLICATION_JSON_VALUE)

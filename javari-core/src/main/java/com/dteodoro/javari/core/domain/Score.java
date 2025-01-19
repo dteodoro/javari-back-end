@@ -27,6 +27,8 @@ public class Score implements Serializable {
 	private Integer amountBetMade;
 	private Integer numberOfHits;
 	private BigDecimal efficiencyPercentage;
+	@ManyToOne
+	private Competition competition;
 
 	public Score() {
 		this.numberOfHits = 0;

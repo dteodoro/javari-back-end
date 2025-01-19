@@ -110,6 +110,6 @@ public class LoaderServiceImp implements LoaderService {
             log.error("cannot connect to AuthService:" + e.getMessage());
             e.printStackTrace();
         }
-        return "Bearer " + accessToken;
+        return accessToken.contains("Bearer ") ? accessToken : "Bearer " + accessToken;
     }
 }

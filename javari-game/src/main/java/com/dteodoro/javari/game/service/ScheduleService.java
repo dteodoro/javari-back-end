@@ -61,6 +61,7 @@ public class ScheduleService {
     }
 
     private SeasonCalendarDTO convetToSeasonCalendarDTO(SeasonCalendar seasonCalendar) {
+        if (seasonCalendar == null) {return null;}
         return SeasonCalendarDTO.builder()
                 .season(mapper.map(seasonCalendar.getSeason(), SeasonDTO.class))
                 .startDate(seasonCalendar.getStartDate())
@@ -129,10 +130,8 @@ public class ScheduleService {
         Competitor awayCompetitor = mapper.map(getCompetitor(scheduleDto, HomeAway.AWAY), Competitor.class);
         homeCompetitor.setTeam(teamService.findByEspnId(homeCompetitor.getTeam().getEspnId()));
         awayCompetitor.setTeam(teamService.findByEspnId(awayCompetitor.getTeam().getEspnId()));
-        SeasonCalendar seasonCalendar = seasonService.findByWeekAndSeasonSlugAndSeasonCompetitionYear(
-                scheduleDto.getWeek(),
-                scheduleDto.getSeason().getSlug(),
-                scheduleDto.getSeason().getCompetitionYear());
+        SeasonCalendar seasonCalendar = seasonService.findOrCreateSeasonCalendar(scheduleDto);
+
         return Schedule.builder()
                 .competitionId(scheduleDto.getCompetitionId())
                 .name(scheduleDto.getName())
