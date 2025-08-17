@@ -2,7 +2,7 @@ server:
   port: 8084
 api:
   core:
-    url: "http://javari-game-service"
+    url: "http://game"
 javari:
   client:
     front: "http://javari-front"
@@ -16,7 +16,7 @@ eureka:
     prefer-ip-address: true
   client:
     service-url:
-      defaultZone: http://javari-discovery:8761/eureka/
+      defaultZone: http://discovery:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
 

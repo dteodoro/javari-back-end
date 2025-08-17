@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8180
 spring:
   application:
     name: javari-gateway
@@ -34,7 +34,7 @@ eureka:
     prefer-ip-address: true
   client:
     service-url:
-      defaultZone: http://javari-discovery:8761/eureka/
+      defaultZone: http://discovery:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
 

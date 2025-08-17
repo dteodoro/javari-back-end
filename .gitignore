@@ -64,3 +64,4 @@ target/
 #maven
 .mvn/
 mnt
+db-data
