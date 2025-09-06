@@ -79,7 +79,7 @@ public class SeasonService {
 	public List<SeasonFilterDTO> getSeasonFilters() {
 		List<SeasonFilterDTO> seasonFilters = new ArrayList<>();
 		List<SeasonCalendar> seasonsCalendar = seasonCalendarRepo
-				.findSeasonCalendarBySeasonCompetitionYearOrderByStartDate(2023);
+				.findSeasonCalendarBySeasonCompetitionYearOrderByStartDate(LocalDate.now().getYear());
 		Map<Season, List<SeasonCalendar>> seasons = seasonsCalendar.stream()
 				.collect(Collectors.groupingBy(sc -> sc.getSeason()));
 		seasons.forEach((season, weeks) -> seasonFilters.add(
