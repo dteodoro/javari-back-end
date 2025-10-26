@@ -42,6 +42,8 @@ public class TeamDTO implements DomainDTO {
 	private int scoreLosses;
 	private int scoreTies;
 	private double scoreWinPercentage;
+    private double scoreWinDivPercentage;
+    private double scoreWinConfPercentage;
 	private String scoreHome;
 	private String scoreRoad;
 	private String scoreVersusDiv;
@@ -53,5 +55,9 @@ public class TeamDTO implements DomainDTO {
 	private String scoreScoreSummary;
 	private Integer scoreSeasonYear;
 	private String scoreSeasonName;
+    private double scoreStrengthOfVictory;
 
+    public int getGamesPlayed() {
+        return scoreWins + scoreLosses + scoreTies;
+    }
 }

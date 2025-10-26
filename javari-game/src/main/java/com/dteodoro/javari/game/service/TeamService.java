@@ -30,6 +30,7 @@ public class TeamService {
 	private final TeamRespository teamRepo;
 	private final ModelMapper modelMapper;
 	private final TeamScoreRepository teamScoreRepo;
+    private final StrengthOfVictoryService strengthOfVictoryService;
 
 	public void saveTeam(Team team) {
 		Team currentTeam = teamRepo.findByEspnId(team.getEspnId());
@@ -163,19 +164,18 @@ public class TeamService {
 		score.setSeasonName(teamScoreDTO.getSeasonName());
 		score.setSeasonYear(teamScoreDTO.getSeasonYear());
 		score.updateScoreSummary();
+        score.setStrengthOfVictory(strengthOfVictoryService.calcStrengthOfVictory(team));
 		teamScoreRepo.save(score);
 		team.setScore(score);
 		log.info("Score saved : " + score.getScoreSummary());
 		teamRepo.save(team);
 		log.info("Stats After update: " + team.getScore().getScoreSummary());
 		log.info("Team Score finish");
-
 	}
 
-	private double calcWinPercent(String winPercent) {
+    private double calcWinPercent(String winPercent) {
 		if (winPercent == null)
 			return 0;
-		Double percent = Double.valueOf(winPercent.startsWith(".") ? "0" + winPercent : winPercent);
-		return percent * 100;
+		return Double.parseDouble(winPercent.startsWith(".") ? "0" + winPercent : winPercent);
 	}
 }
